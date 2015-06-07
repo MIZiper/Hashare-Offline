@@ -1,0 +1,54 @@
+#item-zone>div.item {margin: 0.7em; border-bottom: 1px solid lightgray; position: relative;}
+
+/*VersionPlan*/
+.item-verplan-show>.ctrl>label {display: none;}
+.item-verplan-edit>.ctrl>label {display: block;}
+.item-verplan-edit>.ctrl-hiddendate-edit>p {margin: 0;}
+.item-verplan-edit>.ctrl {margin-bottom: 0.5em;}
+.item-verplan-show>.ctrl-select-show {float: left; width: 25%;}
+.item-verplan-show>.ctrl-date-show {float: left;}
+.item-verplan-show>.ctrl-inputbox-show {clear: both;}
+.item-verplan-show>.ctrl-inputbox-show:last-child>p {font-weight: bold; text-align: right;}
+.item-verplan-edit>.ctrl-select-edit {float: left;}
+.item-verplan-edit>.ctrl-hiddendate-edit, .item-verplan-edit>.ctrl-date-edit {float: right; text-align: right;}
+.item-verplan-edit>.ctrl-inputbox-edit {clear: both;}
+.item-verplan-edit>.ctrl-inputbox-edit>input {box-sizing: border-box; width: 100%;}
+.item-verplan-edit>.ctrl-inputbox-edit:last-child>input {box-sizing: border-box; width: 30%;}
+.item-verplan-show {clear: both}
+
+/*RawEditor*/
+.item-raweditor-show>.ctrl-rawinput-show>label {font-weight: bold;}
+.item-raweditor-edit>.ctrl-rawinput-edit>label {display: none;}
+.item-raweditor-edit>.ctrl-rawinput-edit>textarea {box-sizing: border-box; width: 100%; height: 4em;}
+
+/*SimpleTask*/
+.item-simpletask-show>.ctrl>label {display: none;}
+.item-simpletask-show>.ctrl-inputbox-show>p {margin-right: 3em;}
+.item-simpletask-show {position: relative;}
+.item-simpletask-show>.ctrl-toggle-show {position: absolute; right: 1em; bottom: 1em;}
+.item-simpletask-edit {position: relative;}
+.item-simpletask-edit>.ctrl-toggle-edit {position: absolute; top: 0; right: 0;}
+
+/*Hashare*/
+.item-hashare-edit>.ctrl-image-edit>label, .item-hashare-edit>.ctrl-link-edit>label {display: none;}
+.item-hashare-edit>.ctrl-link-edit>input {display: block; margin-top: 2px; box-sizing: border-box; width: 100%;}
+.item-hashare-edit>.ctrl-text-edit>textarea {box-sizing: border-box; width: 100%; height: 4em;}
+.item-hashare-edit>.ctrl-date-edit>label, .item-hashare-edit>.ctrl-hiddendate-edit>label {float: left; clear: both;}
+.item-hashare-edit>.ctrl-date-edit, .item-hashare-edit>.ctrl-hiddendate-edit {text-align: right;}
+.item-hashare-edit>.ctrl-hiddendate-edit>p {display: inline;}
+.item-hashare-show>.ctrl-link-show>p {font-weight: bold;}
+.item-hashare-show>.ctrl>label {display: none;}
+.item-hashare-show>.ctrl-date-show>label {display: inline;}
+.item-hashare-show>.ctrl-date-show>label:after {content: ": ";}
+.item-hashare-show>.ctrl-image-show {float: left; margin-right: 2em;}
+.item-hashare-show>.ctrl-image-show>img.hideme {display: none;}
+.item-hashare-show>.ctrl-date-show>p {display: inline-block;}
+.item-hashare-show>.ctrl-date-show:nth-child(5) {clear: both;} /*nth-child(4) originally*/
+.item-hashare-show>.ctrl-date-show {width: 30%; float: left;}
+.item-hashare-show:after {display: block; content: ""; clear: both;}
+
+/*Setting*/
+.item-sys-relart-show>.ctrl>label,.item-sys-backup-show>.ctrl>label {display: none;}
+.item-sys-relart-show>.ctrl-link-show>p,.item-sys-backup-show>.ctrl-link-show>p {font-weight: bold;}
+.item-sys-backup-show>.ctrl-sys-commands-show {text-align: right;}
+.item-sys-backup-show>.ctrl-sys-commands-show>button {margin: 0.5em;}

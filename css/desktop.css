@@ -1,0 +1,116 @@
+@font-face {
+    font-family: MizCopyFont;
+    src: url("../misc/MizCopyFont.woff") format("woff"), url("../misc/MizCopyFont.ttf") format("truetype");
+    /*
+        This is a nano subset of FontAwesome, to reduce the size
+    
+        "Font Awesome by Dave Gandy - http://fontawesome.io"
+    */
+}
+i.font-btn {
+    font-family: MizCopyFont;
+    font-style: normal;
+    font-weight: normal;
+}
+
+i#btn-backmain:before {content: "\e004";}
+i#btn-setting:before {content: "\e003";}
+i#btn-save:before {content: "\e000";}
+i#btn-addtable:before {content: "\e006";}
+i#btn-addhash:before {content: "\e006";}
+i#btn-additem:before {content: "\e006";}
+i#btn-itemtype:before {content: "\e001";}
+#btn-closedisplay:before {content: "\e009";}
+
+body {margin: 0;}
+.blk {display: none; position: fixed; width: 100%; height: 100%;}
+.font-btn:hover {color: orange; cursor: pointer;}
+li:hover {cursor: pointer;}
+.zone {position: absolute;}
+.side-zone {width: 25%;}
+.main-zone {width: 75%;}
+
+#main-blk {display: block;}
+#hashare {margin-left: 1em;}
+#welcome-zone {height: 100%; background-color: lightblue;}
+#main-blk>.side-zone {right: 0;}
+#table-zone {height: 85%; overflow-y: auto;}
+#table-zone>ul {padding: 0; margin: 0;}
+li.table {font-size: 1.5em; font-weight: bold; list-style: none; padding: 1em 2em;}
+li.table.active,li.hash.active {background-color: skyblue; color: white;}
+li.table:hover,li.table.hover {background-color: lightblue; color: white;}
+#description {position: absolute; margin-right: 5%; margin-left: 10%; bottom: 0; right: 0;}
+#special-zone {height: 15%; bottom: 0; text-align: center; border-top: 2px solid lightblue;}
+#special-zone>.panel,#hash-rel-zone>.panel {display: table; height: 100%; width: 100%;}
+#btn-addtable,#btn-setting,#btn-additem,#btn-itemtype {display: table-cell; font-size: 2em; vertical-align: middle;}
+
+/*#table-blk {display: block;}*/
+#table-rel-zone>h2 {margin-left: 0.5em; font-size: 2em;}
+#table-name {display: inline-block; text-indent: 0.5em;}
+#table-blk>.side-zone {background-color: lightblue;}
+#table-rel-zone {height: 20%;}
+#table-rel-zone>.panel {position: absolute; bottom: 0; width: 100%;}
+#btn-addhash,#btn-save {float: right; margin: 12px; font-size: 1.2em;}
+#btn-showhash {float:left; margin: 12px; display: none;}
+#hash-rel-zone {height: 10%; bottom: 0; text-align: center;}
+#hash-zone {height: 70%; top: 20%; overflow-y: auto; border-top: 2px solid white; border-bottom: 2px solid white;}
+#hash-zone>ul {padding: 0; margin: 0;}
+li.hash {font-size: 1.2em; font-weight: bold; padding: 0.7em 1.2em;}
+li.hash:hover,li.hash.hover {background-color: white; color: lightblue;}
+#table-blk.moving li.hash:hover, #table-blk.moving div.item:hover {border-top: orange 2px solid;}
+#item-zone {height: 100%; right: 0; overflow-y: auto;}
+
+#popup-blk {display: block; height: auto;}
+#popup-blk>.zone {display: none; background-color: white;}
+p.title {font-weight: bold;}
+div.content {text-align: center;}
+
+#popup-blk>#menu-zone {border: 2px solid black; width: 10em; max-height: 10em; overflow-y: auto; padding: 0.5em 0; z-index: 99;}/*toggle*/
+ul.menu {display: none; margin: 0; padding: 0;}/*toggle*/
+li.menu-item {list-style: none; padding: 0.7em; font-weight: bold;}
+li.menu-item:hover {background-color: lightgray;}
+
+#popup-blk>#message-zone {display: block;}
+#hint-message {position: fixed; bottom: 1em; right: 1em; width: 20em; background-color: skyblue; display: none;}/*toggle*/
+#hint-message>p {margin: 1em; line-height: 1.5em;}
+#alert-message {position: fixed; width: 100%; height: 100%; background-color: skyblue; display: none;}/*toggle*/
+#alert-message>p {margin-top: 20%; padding: 2em; margin-bottom: 0; font-weight: bold; font-size: 1.2em; background-color: white; border-bottom: 2px solid lightblue;}
+#alert-message>.panel {padding: 1em 2em; text-align: right; background-color: white;}
+
+#popup-blk>#edit-zone,#popup-blk>#editem-zone,#popup-blk>#picker-zone {border: 2px solid black; background-color: lightblue; min-width: 20em; padding: 0.5em;}/*toggle*/
+#edit-zone>.panel,#picker-zone>.panel {position: absolute; bottom: 0.5em; right: 0.5em;}
+div.picker,#edit-hash,#edit-table {display: none;}/*toggle*/
+#editem-zone>.panel,#edit-table>.panel,#edit-hash>.panel,div.picker>.panel {margin-top: 12px; padding-top: 12px; border-top: 2px solid white;}
+#input-tablefile,#input-imagefile {display: none;}
+#editem-zone>.panel {text-align: right}
+#btn-pasteitem {float: left;}
+#image-picker-container {height: 300px; overflow-y: auto; margin: 0; padding: 0; width: 20em;}
+li.thumb {padding: 6px; display: inline-block;}
+li.thumb:hover {padding: 2px; border: 2px orange solid; margin: 2px;}
+
+#popup-blk>#display-zone {position: fixed; height: 100%; width: 100%; background-color: transparent;}/*toggle*/
+#display-mask {position: absolute; height: 100%; opacity: 0.7; width: 100%; background-color: lightgray;}
+#btn-closedisplay {position: absolute; right: 0; top: 0; font-size: 1.5em; margin: 12px;}
+.display {display: none; position: absolute; top: 50%; left: 50%; min-width: 20em; transform: translate(-50%,-50%); padding: 0.5em; background-color: lightblue; border: 2px solid black;}/*toggle*/
+.display>.panel {position: absolute; left: 50%; transform: translateX(-50%);}
+
+
+
+@media screen and (max-width: 800px) {
+    .zone {width: 100%;}
+    li.table>i.btn-context:before, li.hash>i.btn-context:before, li.thumb>i.btn-context:before {content: "\e002"; display: inline-block; padding-right: 1em;}
+    #item-zone>.item>i.btn-context:before {content: "\e002"; position: absolute; top: 0; right: 0; padding: 0.5em;}
+    
+    #welcome-zone {height: 15%;}
+    #description {display: none;}
+    #table-zone {height: 70%; top: 15%;}
+    
+    #btn-showhash {display: block;}
+    #table-rel-zone>h2 {margin-top: 0;}
+    #item-zone {height: 70%; top: 20%; background-color: white; display: none;}
+    
+    #popup-blk>.zone {width: 100%; box-sizing: border-box;}
+    #hint-message {top: 0; left: 0; width: 100%; right: auto; bottom: auto;}
+    
+    #image-picker-container {width: 100%;}
+}

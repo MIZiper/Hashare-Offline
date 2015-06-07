@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html manifest="misc/main.appcache">
+    <head>
+        <title>Hashare-Offline</title>
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no"/>
+        <link type="text/css" rel="stylesheet" href="css/desktop.css"/>
+        <link type="text/css" rel="stylesheet" href="css/items.css"/>
+    </head>
+    
+    <body>
+        <div id="main-blk" class="blk">
+            <div id="welcome-zone" class="zone main-zone">
+                <h1 id="hashare">Hashare-Offline</h1>
+                <p id="description" data-prekey="description">Hashare-Offline is a note and todo like tool, using some webpage techniques.</p>
+            </div>
+            <div id="table-zone" class="zone side-zone">
+<!--
+                <ul>
+                    <li class="table active">Table 1</li>
+                </ul>
+-->
+            </div>
+            <div id="special-zone" class="zone side-zone">
+                <div class="panel">
+                    <i class="font-btn" id="btn-addtable"></i>
+                    <i class="font-btn" id="btn-setting"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div id="table-blk" class="blk">
+            <div id="table-rel-zone" class="zone side-zone">
+                <h2>
+                    <i class="font-btn" id="btn-backmain"></i>
+                    <span id="table-name"></span>
+                </h2>
+                <div class="panel">
+                    <button id="btn-showhash" data-prekey="showhash"></button>
+                    <i class="font-btn" id="btn-addhash"></i>
+                    <i class="font-btn" id="btn-save"></i>
+                </div>
+            </div>
+            <div id="hash-rel-zone" class="zone side-zone">
+                <div class="panel">
+                    <i class="font-btn" id="btn-additem"></i>
+                    <i class="font-btn" id="btn-itemtype"></i>
+                </div>
+            </div>
+            <div id="hash-zone" class="zone side-zone">
+<!--
+                <ul>
+                    <li class="hash active">Hash 1</li>
+                </ul>
+-->
+            </div>
+            <div id="item-zone" class="zone main-zone">
+            </div>
+        </div>
+        
+        <div id="popup-blk" class="blk">
+            <div id="menu-zone" class="zone">
+<!--
+                <ul class="menu">
+                    <li class="menu-item">Command 1</li>
+                </ul>
+-->
+            </div>
+            <div id="edit-zone" class="zone">
+                <div id="edit-hash">
+                    <p class="title" data-prekey="edithash"></p>
+                    <div class="content">
+                        <label data-prekey="name"></label>
+                        <input id="input-hashname" type="text"/>
+                    </div>
+                    <div class="panel">
+                        <button id="btn-pastehash" type="button" data-prekey="paste"></button>
+                    </div>
+                 </div>
+                <div id="edit-table">
+                    <p class="title" data-prekey="edittable"></p>
+                    <div class="content">
+                        <label data-prekey="name"></label>
+                        <input id="input-tablename" type="text"/>
+                    </div>
+                    <div class="panel">
+                        <input id="input-tablefile" type="file" multiple/>
+                        <button id="btn-tablefile" type="button" data-prekey="fromfile"></button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <button type="button" id="btn-edit-yes" data-prekey="yes"></button>
+                    <button type="button" id="btn-edit-no" data-prekey="no"></button>
+                </div>
+            </div>
+            <div id="editem-zone" class="zone">
+                <p class="title" data-prekey="editem"></p>
+                
+<!--
+                <div class="item item-TYPE-edit"></div>
+-->
+                
+                <div class="panel">
+                    <button type="button" id="btn-pasteitem" data-prekey="paste"></button>
+                    <button type="button" id="btn-editem-yes" data-prekey="yes"></button>
+                    <button type="button" id="btn-editem-no" data-prekey="no"></button>
+                </div>
+            </div>
+            <div id="picker-zone" class="zone">
+                <div class="picker" id="date-picker">
+                    <p class="title" data-prekey="datepicker"></p>
+                    <div class="content">
+                        <label data-prekey="year"></label>
+                        <select id="date-picker-year"></select>
+                        <label data-prekey="month"></label>
+                        <select id="date-picker-month"></select>
+                        <label data-prekey="day"></label>
+                        <select id="date-picker-day"></select>
+                    </div>
+                    <div class="panel">
+                        <button type="button" id="btn-today" data-prekey="today"></button>
+                        <button type="button" id="btn-emptydate" data-prekey="empty"></button>
+                    </div>
+                </div>
+                <div class="picker" id="image-picker">
+                    <p class="title" data-prekey="imagepicker"></p>
+                    <div class="content">
+                        <ul id="image-picker-container">
+                        </ul>
+                    </div>
+                    <div class="panel">
+                        <input id="input-imagefile" type="file" />
+                        <button type="button" id="btn-imagefile" data-prekey="fromfile"></button>
+                        <button type="button" id="btn-emptyimage" data-prekey="empty"></button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <button type="button" id="btn-picker-yes" data-prekey="yes"></button>
+                    <button type="button" id="btn-picker-no" data-prekey="no"></button>
+                </div>
+            </div>
+            <div id="display-zone" class="zone">
+                <div id="display-mask"></div>
+                <div class="display" id="down-display">
+                    <p class="title" data-prekey="downlink"></p>
+                    <div class="content">
+                        <a id="down-display-anchor"></a>
+                    </div>
+                </div>
+                <div class="display" id="image-display">
+                    <div class="content">
+                        <img src="" id="image-display-img" />
+                    </div>
+                    <div class="panel">
+                        <button type="button" id="btn-imagelarger" data-prekey="larger"></button>
+                        <button type="button" id="btn-imagesmaller" data-prekey="smaller"></button>
+                    </div>
+                </div>
+                <i class="font-btn" id="btn-closedisplay"></i>
+            </div>
+            <div id="message-zone" class="zone">
+                <div id="hint-message">
+                    <p></p>
+                </div>
+                <div id="alert-message">
+                    <p></p>
+                    <div class="panel">
+                        <button type="button" id="btn-alert-yes" data-prekey="yes"></button>
+                        <button type="button" id="btn-alert-no" data-prekey="no"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script type="text/javascript" src="script/Utility.js"></script>
+        <script type="text/javascript" src="script/Data.js"></script>
+        <script type="text/javascript" src="script/TableHashItem.js"></script>
+        <script type="text/javascript" src="script/UIOperation.js"></script>
+        <script type="text/javascript" src="script/DomOperation.js"></script>
+        <script type="text/javascript" src="script/PickerDisplay.js"></script>
+        <script type="text/javascript" src="script/Listener.js"></script>
+        <script type="text/javascript" src="script/ItemControl.js"></script>
+        <script type="text/javascript" src="script/Setting.js"></script>
+    </body>
+</html>

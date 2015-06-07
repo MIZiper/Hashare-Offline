@@ -1,0 +1,20 @@
+CACHE MANIFEST
+#v0.5.11.4
+/
+/css/items.css
+/css/desktop.css
+/script/Utility.js
+/script/Data.js
+/script/TableHashItem.js
+/script/UIOperation.js
+/script/DomOperation.js
+/script/PickerDisplay.js
+/script/Listener.js
+/script/ItemControl.js
+/script/Setting.js
+/misc/whobody.png
+/misc/MizCopyFont.ttf
+/misc/MizCopyFont.woff
+
+NETWORK:
+*

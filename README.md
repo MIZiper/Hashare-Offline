@@ -13,3 +13,4 @@ IE 10+, Chrome, FireFox, Chrome for Android, FireFox for Android, IE 11 for WP8.
 * Store all files on local storage, and open "index.html" using browser directly. (IE restrict indexedDB on local files, so open with Chrome)
 * Or put the files on your static web server. Register an OneDrive dev account and set the redirect URI, then replace the "client_id" in "Setting.js" to yours, and you're able to use OneDrive to sync Tables manually using your AppDir.
 * Refer to <http://blog.mizip.net/hashare-howto-en> for detail usage. (Currently unavailable)
+* Add "?lang=en" for the first time to access English prompted page.

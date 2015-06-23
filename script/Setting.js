@@ -146,7 +146,7 @@ SyncDelegate.AddHandler("onedrive",{
     ToAuth:function(){
         var response_type = "token",
             client_id = "0000000040157B10",
-            redirect_uri = encodeURIComponent(location.origin+location.pathname),
+            redirect_uri = encodeURIComponent(location.protocol+"//"+location.host+location.pathname),
             auth_url = " https://login.live.com/oauth20_authorize.srf",
             scope = "onedrive.appfolder";
         var url = auth_url+"?scope="+scope+"&client_id="+client_id+"&response_type="+response_type+"&redirect_uri="+redirect_uri;

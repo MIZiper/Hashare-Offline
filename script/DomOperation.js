@@ -233,6 +233,7 @@ var ItemDom = {
         var fragDoc = document.createDocumentFragment();
         var obj;
         for (var i in k) {
+            if (k[i].ItemString==null) continue;
             obj = new t(k[i]);
             fragDoc.appendChild(obj.ItemDomObject);
         }

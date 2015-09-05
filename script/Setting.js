@@ -402,8 +402,9 @@ var TypesManager = {
                     req.onerror = function(evt){console.log(evt);}
                 }
             };
-        xhrjs.responseType = "blob";
         xhrjs.open("get",path+credential+".js");
+        xhrjs.responseType = "blob";
+        /* set responseType after open for ie, btw ie doesn't support responseType="json" */
         xhrjs.onreadystatechange = function(){
             if (this.readyState == 4) {
                 var b = new Blob([]);
@@ -414,8 +415,8 @@ var TypesManager = {
             }
         }
         xhrjs.send();
-        xhrcss.responseType = "blob";
         xhrcss.open("get",path+credential+".css");
+        xhrcss.responseType = "blob";
         xhrcss.onreadystatechange = function(){
             if (this.readyState == 4) {
                 var b = new Blob([]);

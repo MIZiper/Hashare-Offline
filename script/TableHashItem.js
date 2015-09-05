@@ -92,6 +92,8 @@ var HashStoreClass = (function(){
         this.name = hashObj.name;
         this.type = hashObj.type;
         this.ItemStrings = hashObj.ItemStrings;
+        this.StartAction = hashObj.StartAction || null;
+        this.EndAction = hashObj.EndAction || null;
         this.IsModified = false;
     }
     
@@ -211,6 +213,7 @@ var CurrentHashClass = (function(){
     function C(hashStoreObj){
         this.type = hashStoreObj.type;
         var itemStrObjs = [];
+        if (hashStoreObj.StartAction) hashStoreObj.StartAction(hashStoreObj);
         var itemStrs = hashStoreObj.ItemStrings;
         for (var i in itemStrs) {
             itemStrObjs.push(new ItemStringClass(itemStrs[i]));
@@ -253,8 +256,10 @@ var CurrentHashClass = (function(){
             }
         }
         if (flag && !test) {
-            var newItemStrObjs = [];
-            var newItemStrs = [];
+            var newItemStrObjs = [],
+                newItemStrs = this.HashStoreObject.ItemStrings;
+            newItemStrs.splice(0);
+            /* instead of set newItemStrs to new [], use splice can make the change back to Hashes, useful for settingData */
             for (var i in itemStrObjs) {
                 if (!itemStrObjs[i].IsModified || itemStrObjs[i].ItemString!=null) {
                     itemStrObjs[i].IsModified = false;
@@ -262,9 +267,10 @@ var CurrentHashClass = (function(){
                     newItemStrs.push(itemStrObjs[i].ItemString);
                 }
             }
-            this.HashStoreObject.ItemStrings = newItemStrs;
+            //this.HashStoreObject.ItemStrings = newItemStrs;
             this.HashStoreObject.IsModified = true;
             this.ItemStringObjects = newItemStrObjs;
+            if (this.HashStoreObject.EndAction) this.HashStoreObject.EndAction(this.HashStoreObject);
         }
         return flag;
         /*
@@ -311,8 +317,9 @@ var CurrentTableClass = (function(){
         req.onerror = function(evt){console.log(evt);}
     }
     C.prototype.AddHash = function(val){
-        var obj = {name:val,type:"",ItemStrings:[]};
-        var hashStoreObj = new HashStoreClass(obj);
+        var defType = localStorage.getItem("default-type"),
+            obj = {name:val,type:(defType || ""),ItemStrings:[]},
+            hashStoreObj = new HashStoreClass(obj);
         hashStoreObj.IsModified = true;
         /*
             HashStoreObjects.length increases too, and the granularity of db
@@ -447,17 +454,22 @@ var CurrentUserClass = (function(){
     return C;
 })();
 
-var dbConn;
+var dbConn,
+    dbCallbacks = [];
 (function(){
-    var req = indexedDB.open("HashareOffline",1);
+    var req = indexedDB.open("HashareOffline",2);
     req.onsuccess = function(evt){
         dbConn = evt.target.result;
+        for (var i in dbCallbacks) dbCallbacks[i]();
     }
     req.onupgradeneeded = function(evt){
         var db = evt.target.result;
-        var tblStore = db.createObjectStore("Tables",{keyPath:"guid"});
-        var resStore = db.createObjectStore("Resources",{keyPath:"fname"});
-        resStore.createIndex("idx_type","type");
+        if (!evt.oldVersion) {
+            var tblStore = db.createObjectStore("Tables",{keyPath:"guid"});
+            var resStore = db.createObjectStore("Resources",{keyPath:"fname"});
+            resStore.createIndex("idx_type","type");
+        }
+        var itemStore = db.createObjectStore("ItemTypes",{keyPath:"type"});
     }
     req.onblocked = function(evt){
         console.log(evt);

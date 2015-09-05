@@ -1,0 +1,9 @@
+{
+    "ItemTypes":[
+        {
+            "type":"verplan",
+            "name":"Version Plan",
+            "intro":"To write down the features planned and turn to history when they're implemented"
+        }
+    ]
+}

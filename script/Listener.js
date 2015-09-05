@@ -83,10 +83,12 @@ MenuManager.AddMenu("hash",[
 ]);
 MenuManager.AddMenu("itemType",{});
 ItemType.AddTypeListener(function(info){
-    MenuManager.AppendMenuItem("itemType",{
-        title:info.name,
-        func:(function(type){return function(){ItemDom.SwitchToType(type);}})(info.type)
-    })
+    var prefTypes = localStorage.getItem("preferred-types");
+    if (!prefTypes || (prefTypes.indexOf(info.type)!=-1)) //caution that one typeName might be a subset of another
+        MenuManager.AppendMenuItem("itemType",{
+            title:info.name,
+            func:(function(type){return function(){ItemDom.SwitchToType(type);}})(info.type)
+        });
     /*Judge here whether the newly registered type is in user's favorite list*/
 });
 MenuManager.AddMenu("item",[

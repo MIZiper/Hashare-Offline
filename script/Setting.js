@@ -308,6 +308,222 @@ var ItemShow_Sys_Backup = (function(){
 
 
 
+var TypesManager = {
+    DeleteItemType:function(credential,evt){
+        var req = dbConn.transaction("ItemTypes","readwrite").objectStore("ItemTypes").delete(credential);
+        req.onsuccess = function(e){
+            var itemEle = evt.target.MizUpTo("item");
+            ItemDom.Delete(itemEle);
+            MizUI.Message.Hint("set-package-deleted");
+        }
+    },
+    DefautlItemType:function(credential){
+        localStorage.setItem("default-type",credential);
+        MizUI.Message.Hint("set-package-defaulted");
+    },
+    PreferredItemTypes:function(hashStoreObject){
+        var itemDomObjs = ItemDom._ELE.querySelectorAll(".item"),
+            prefTypes = [],
+            prefAll = true,
+            itemTypeObj;
+        for (var i=0, l=itemDomObjs.length; i<l; i++) {
+            itemTypeObj = itemDomObjs[i].MizObject;
+            if (itemTypeObj.Controls[3].GetValue()=="1") {
+                prefTypes.push(itemTypeObj.Controls[0].GetValue());
+                continue;
+            }
+            prefAll = false;
+        }
+        localStorage.setItem("preferred-types",(prefAll?"":prefTypes.join(";")));
+        //use hashStoreObject instead of itemDomObjs
+    },
+    InstalledItemTypes:(function(){
+        var t = false;
+        return function(hashStoreObject){
+            if (t) return;
+            var itemStrs = hashStoreObject.ItemStrings,
+                itemTypes = ItemType.ItemInfos,
+                prefTypes = localStorage.getItem("preferred-types");
+            for (var i in itemTypes) {
+                itemStrs.push(
+                    itemTypes[i].type+";"+
+                    itemTypes[i].name.MizEncode()+";"+
+                    itemTypes[i].intro.MizEncode()+";"+
+                    ((!prefTypes || prefTypes.indexOf(itemTypes[i].type)!=-1) ? "1;" : "0;")+
+                    itemTypes[i].type+"|3"
+                );
+            }
+            t = true;
+        }
+    })(),
+    ListedItemTypes:(function(){
+        var t = false;
+        return function(hashStoreObject){
+            if (t) return;
+            var xhr = new XMLHttpRequest();
+            //xhr.responseType = "json";
+            xhr.open("get",MizLang.GetDefaultLang("set-package-path")+MizLang.GetDefaultLang("set-package-json"),false);
+            xhr.onreadystatechange = function(){
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var itemTypes = JSON.parse(this.responseText).ItemTypes,
+                            itemStrs = hashStoreObject.ItemStrings;
+                        for (var i in itemTypes) {
+                            itemStrs.push(
+                                itemTypes[i].name.MizEncode()+";"+
+                                itemTypes[i].intro.MizEncode()+";"+
+                                itemTypes[i].type+"|1"
+                            );
+                        }
+                    }
+                }
+            }
+            xhr.send();
+            t = true;
+        }
+    })(),
+    DownItemType:function(credential){
+        var path = MizLang.GetDefaultLang("set-package-path"),
+            xhrjs = new XMLHttpRequest(),
+            xhrcss = new XMLHttpRequest();
+        var blobjs = null, blobcss = null,
+            dbHandler = function(type,blob){
+                (type=="js") && (blobjs=blob);
+                (type=="css") && (blobcss=blob);
+                if (blobjs && blobcss) {
+                    var req = dbConn.transaction("ItemTypes","readwrite").objectStore("ItemTypes").put({
+                        type:credential,
+                        js:blobjs,
+                        css:blobcss
+                    });
+                    req.onsuccess = function(evt){
+                        MizUI.Message.Hint("set-package-down");
+                    }
+                    req.onerror = function(evt){console.log(evt);}
+                }
+            };
+        xhrjs.responseType = "blob";
+        xhrjs.open("get",path+credential+".js");
+        xhrjs.onreadystatechange = function(){
+            if (this.readyState == 4) {
+                var b = new Blob([]);
+                if (this.status == 200) {
+                    b = this.response;
+                }
+                dbHandler("js",b);
+            }
+        }
+        xhrjs.send();
+        xhrcss.responseType = "blob";
+        xhrcss.open("get",path+credential+".css");
+        xhrcss.onreadystatechange = function(){
+            if (this.readyState == 4) {
+                var b = new Blob([]);
+                if (this.status == 200) {
+                    b = this.response;
+                }
+                dbHandler("css",b);
+            }
+        }
+        xhrcss.send();
+    },
+    InitItemTypes:(function(){
+        if (!dbConn) {
+            dbCallbacks.push(arguments.callee);
+            return;
+        }
+        var req = dbConn.transaction("ItemTypes","readonly").objectStore("ItemTypes").openCursor(),
+            blobjs = new Blob([]),
+            blobcss = new Blob([]);
+        req.onsuccess = function(evt){
+            var cur = evt.target.result;
+            if (cur) {
+                blobcss = new Blob([blobcss,cur.value.css]);
+                blobjs = new Blob([blobjs,cur.value.js]);
+                cur.continue();
+            } else {
+                var script = document.createElement("script"),
+                    css = document.createElement("link");
+                script.type = "text/javascript";
+                script.src = URL.createObjectURL(blobjs);
+                css.type = "text/css";
+                css.rel = "stylesheet";
+                css.href = URL.createObjectURL(blobcss);
+                document.head.appendChild(css);
+                document.body.appendChild(script);
+            }
+        }
+        return true;
+    })()
+}
+
+var CtrlShow_Hidden = (function(){
+    function C(ctrlStr,itemTypeObj){
+        ControlTypeBase.call(this,ctrlStr,itemTypeObj,C.TYPENAME);
+        //this.SetValue(ctrlStr,true);
+    }
+    var P = ControlTypeBase.GetProto(C);
+    
+    C.TYPENAME = "hidden-show";
+    
+    P.SetValue = function(ctrlStr,inner){
+        this.ControlString = ctrlStr;
+    }
+    
+    return C;
+})();
+
+var ItemShow_Sys_Installed = (function(){
+    function C(itemStrObj){
+        ItemTypeBase.call(this,itemStrObj,C.TYPENAME);
+        this.SetCtrls(CtrlShow_Hidden,CtrlShow_Inputbox,CtrlShow_Text,CtrlShow_Toggle,CtrlShow_Sys_Commands,["item-sys-installed-hidden","item-sys-installed-name","item-sys-installed-intro","item-sys-installed-dis","item-sys-installed-cmds"]);
+        this.Controls[4].SetCommands([
+            {key:"item-sys-installed-del",func:TypesManager.DeleteItemType},
+            {key:"item-sys-installed-def",func:TypesManager.DefautlItemType}
+        ]);
+    }
+    var P = ItemTypeBase.GetProto(C);
+    
+    var langsPack = {
+        langs:["zh-cn","en"],
+        pack:{
+            "item-sys-installed-hidden":["\u5FFD\u7565","Ignore Me"],
+            "item-sys-installed-name":["\u540D\u79F0","Type Name"],
+            "item-sys-installed-intro":["\u4ECB\u7ECD","Introduction"],
+            "item-sys-installed-cmds":["\u547D\u4EE4","Commands"],
+            "item-sys-installed-del":["\u5220\u9664","Delete"],
+            "item-sys-installed-def":["\u8BBE\u4E3A\u9ED8\u8BA4","Make Default"],
+            "item-sys-installed-dis":["\u663E\u793A","Display"],
+            "item-sys-package-down":["\u4E0B\u8F7D","Download"]
+        }
+    }
+    MizLang.AddLangsPack(langsPack);
+    C.TYPENAME = "sys-installed-show";
+    C.INTROKEY = null;
+    
+    ItemType.RegisterType(C);
+    return C;
+})();
+
+var ItemShow_Sys_Package = (function(){
+    function C(itemStrObj){
+        ItemTypeBase.call(this,itemStrObj,C.TYPENAME);
+        this.SetCtrls(CtrlShow_Inputbox,CtrlShow_Text,CtrlShow_Sys_Commands,["item-sys-installed-name","item-sys-installed-intro","item-sys-installed-cmds"]);
+        this.Controls[2].SetCommands([
+            {key:"item-sys-package-down",func:TypesManager.DownItemType}
+        ]);
+    }
+    var P = ItemTypeBase.GetProto(C);
+    
+    C.TYPENAME = "sys-package-show";
+    C.INTROKEY = null;
+    
+    ItemType.RegisterType(C);
+    return C;
+})();
+
+
+
 (function(){
     var langsPack = {
         langs:["zh-cn","en"],
@@ -328,7 +544,14 @@ var ItemShow_Sys_Backup = (function(){
             "set-backup-onedrive":[
                 "OneDrive|https://onedrive.live.com/;\u901A\u8FC7\u5FAE\u8F6FOneDrive\u5907\u4EFD\uFF08Tables\u3001\u56FE\u7247\u3001\u6807\u7B7E\uFF09\u7B49\u8D44\u6E90\uFF08\u4E0D\u8FC7\u6682\u65F6\u53EA\u80FD\u5907\u4EFDTables\uFF09\uFF0C\u5728\u684C\u9762\u4E0E\u79FB\u52A8\u6D4F\u89C8\u5668\u95F4\u540C\u6B65\uFF08\u624B\u52A8\uFF09\u3002\u5982\u679C\u60A8\u5BF9\u9690\u79C1\u6709\u6240\u7591\u8651\uFF0C\u8BF7\u770B\u201C\u76F8\u5173\u6587\u7AE0-OAuth\u767B\u5165\u5907\u4EFD\u201D\u3002\\n\u6BCF\u6B21\u767B\u5165\u51ED\u8BC1\u6709\u6548\u65F6\u95F4\u4E3A\u4E00\u5C0F\u65F6\uFF0C\u53E6\u5173\u95ED\u6D4F\u89C8\u5668\u4E5F\u5C06\u4E22\u5931\u51ED\u8BC1\uFF0C\u8BF7\u91CD\u65B0\u767B\u5165\u3002;onedrive|7",
                 "OneDrive|https://onedrive.live.com/;Backup your Tables/Images/Tags/etc.(only Tables currently) through Microsoft OneDrive, and sync manually among desktop and mobile browsers. Please refer to \"Relevant Posts - OAuth Backup\" for the privacy issue.\\nToken will expire in an hour and get lost when browser closed, just re-login then.;onedrive|7"
-            ]
+            ],
+            "set-installed":["\u5DF2\u88C5\u7C7B\u578B","Installed Types"],
+            "set-package":["\u7C7B\u578B\u5217\u8868","Types List"],
+            "set-package-json":["package.zh-cn.json","package.en.json"],
+            "set-package-path":["itemType/","itemType/"],
+            "set-package-down":["\u4E0B\u8F7D\u5B8C\u6210\uFF0C\u91CD\u65B0\u8F7D\u5165\u540E\u751F\u6548\u3002","Download complete, reload to take effect."],
+            "set-package-deleted":["\u7C7B\u578B\u5DF2\u5220\u9664\uFF0C\u91CD\u8F7D\u540E\u751F\u6548\uFF0C\u7CFB\u7EDF\u7C7B\u578B\u65E0\u6CD5\u5220\u9664\u3002","Type deleted, reload to take effect or it's a system type."],
+            "set-package-defaulted":["\u7C7B\u578B\u5DF2\u8BBE\u7F6E\u4E3A\u9ED8\u8BA4\u3002","Type has been set to default."]
         }
     }
     MizLang.AddLangsPack(langsPack);
@@ -348,11 +571,25 @@ var ItemShow_Sys_Backup = (function(){
             ItemStrings:[
                 MizLang.GetDefaultLang("set-backup-onedrive")
             ]
+        },
+        {
+            name:MizLang.GetDefaultLang("set-installed"),
+            type:"sys-installed",
+            StartAction:TypesManager.InstalledItemTypes,
+            EndAction:TypesManager.PreferredItemTypes,
+            ItemStrings:[]
+        },
+        {
+            name:MizLang.GetDefaultLang("set-package"),
+            type:"sys-package",
+            StartAction:TypesManager.ListedItemTypes,
+            ItemStrings:[]
         }
     ]
 
     var settingBackMain = function(evt){
         if (!EventManager.CanContinue(1)) return;
+        if (CurrentHashObject) CurrentHashObject.End();
         ItemDom.Clear();HashDom.Clear();
         document.getElementById("btn-backmain").removeEventListener("click",settingBackMain,false);
         document.getElementById("hash-zone").removeEventListener("click",settingSwitchHash,false);
@@ -383,6 +620,7 @@ var ItemShow_Sys_Backup = (function(){
         document.getElementById("main-blk").style.display = "none";
         CurrentTableObject = new CurrentTableClass(null);
         CurrentTableObject.AppendHashes(settingData);
+        ItemDom._ELE.style.display = "none";
         HashDom.Init();
         document.getElementById("btn-backmain").addEventListener("click",settingBackMain,false);
         EventManager.SetLevel(1);

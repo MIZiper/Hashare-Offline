@@ -1,0 +1,15 @@
+/*VersionPlan*/
+.item-verplan-show>.ctrl>label {display: none;}
+.item-verplan-edit>.ctrl>label {display: block;}
+.item-verplan-edit>.ctrl-hiddendate-edit>p {margin: 0;}
+.item-verplan-edit>.ctrl {margin-bottom: 0.5em;}
+.item-verplan-show>.ctrl-select-show {float: left; width: 25%;}
+.item-verplan-show>.ctrl-date-show {float: left;}
+.item-verplan-show>.ctrl-inputbox-show {clear: both;}
+.item-verplan-show>.ctrl-inputbox-show:last-child>p {font-weight: bold; text-align: right;}
+.item-verplan-edit>.ctrl-select-edit {float: left;}
+.item-verplan-edit>.ctrl-hiddendate-edit, .item-verplan-edit>.ctrl-date-edit {float: right; text-align: right;}
+.item-verplan-edit>.ctrl-inputbox-edit {clear: both;}
+.item-verplan-edit>.ctrl-inputbox-edit>input {box-sizing: border-box; width: 100%;}
+.item-verplan-edit>.ctrl-inputbox-edit:last-child>input {box-sizing: border-box; width: 30%;}
+.item-verplan-show {clear: both}

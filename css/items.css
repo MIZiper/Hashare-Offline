@@ -1,21 +1,5 @@
 #item-zone>div.item {margin: 0.7em; border-bottom: 1px solid lightgray; position: relative;}
 
-/*VersionPlan*/
-.item-verplan-show>.ctrl>label {display: none;}
-.item-verplan-edit>.ctrl>label {display: block;}
-.item-verplan-edit>.ctrl-hiddendate-edit>p {margin: 0;}
-.item-verplan-edit>.ctrl {margin-bottom: 0.5em;}
-.item-verplan-show>.ctrl-select-show {float: left; width: 25%;}
-.item-verplan-show>.ctrl-date-show {float: left;}
-.item-verplan-show>.ctrl-inputbox-show {clear: both;}
-.item-verplan-show>.ctrl-inputbox-show:last-child>p {font-weight: bold; text-align: right;}
-.item-verplan-edit>.ctrl-select-edit {float: left;}
-.item-verplan-edit>.ctrl-hiddendate-edit, .item-verplan-edit>.ctrl-date-edit {float: right; text-align: right;}
-.item-verplan-edit>.ctrl-inputbox-edit {clear: both;}
-.item-verplan-edit>.ctrl-inputbox-edit>input {box-sizing: border-box; width: 100%;}
-.item-verplan-edit>.ctrl-inputbox-edit:last-child>input {box-sizing: border-box; width: 30%;}
-.item-verplan-show {clear: both}
-
 /*RawEditor*/
 .item-raweditor-show>.ctrl-rawinput-show>label {font-weight: bold;}
 .item-raweditor-edit>.ctrl-rawinput-edit>label {display: none;}
@@ -48,7 +32,10 @@
 .item-hashare-show:after {display: block; content: ""; clear: both;}
 
 /*Setting*/
-.item-sys-relart-show>.ctrl>label,.item-sys-backup-show>.ctrl>label {display: none;}
-.item-sys-relart-show>.ctrl-link-show>p,.item-sys-backup-show>.ctrl-link-show>p {font-weight: bold;}
-.item-sys-backup-show>.ctrl-sys-commands-show {text-align: right;}
-.item-sys-backup-show>.ctrl-sys-commands-show>button {margin: 0.5em;}
+.item-sys-relart-show>.ctrl>label,.item-sys-backup-show>.ctrl>label,.item-sys-installed-show>.ctrl>label,.item-sys-package-show>.ctrl>label {display: none;}
+.item-sys-relart-show>.ctrl-link-show>p,.item-sys-backup-show>.ctrl-link-show>p,.item-sys-installed-show>.ctrl-inputbox-show>p,.item-sys-package-show>.ctrl-inputbox-show>p {font-weight: bold;}
+.ctrl-sys-commands-show {text-align: right;}
+.ctrl-sys-commands-show>button {margin: 0.5em;}
+.item-sys-installed-show>.ctrl-hidden-show {display: none;}
+.item-sys-installed-show>.ctrl-toggle-show {position:absolute; top:0; left: 0;}
+.item-sys-installed-show {padding-left: 1.5em;}

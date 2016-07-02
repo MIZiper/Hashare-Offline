@@ -240,12 +240,12 @@ var MizUI = {
         Yes:function(evt){
             var func = MizUI.Picker._yesCallback;
             var val = MizUI.Picker._lastSome.GetValue();
-            func(val);
             MizUI.Picker._close();
+            func(val);
         },
         No:function(evt){
-            if (MizUI.Picker._noCallback) MizUI.Picker._noCallback();
             MizUI.Picker._close();
+            if (MizUI.Picker._noCallback) MizUI.Picker._noCallback();
         }
     },
     Menu:{

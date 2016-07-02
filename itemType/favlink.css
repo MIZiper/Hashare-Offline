@@ -1,0 +1,11 @@
+/*FavoriteLink*/
+.item-favlink-show>.ctrl>label {display: none;}
+.item-favlink-edit>.ctrl>label {display: block;}
+.item-favlink-show>.ctrl-link-show>p {font-weight: bold;}
+.item-favlink-edit>.ctrl-link-edit>input {display: block; margin-top: 2px; box-sizing: border-box; width: 100%;}
+.item-favlink-edit>.ctrl-inputbox-edit>input {box-sizing: border-box; width: 100%;}
+.item-favlink-show>.ctrl-tag-show>ul {text-align: right; margin: 0; padding: 0;}
+.item-favlink-show>.ctrl-tag-show>ul>li {list-style: none; display: inline-block; margin: 7px;}
+.item-favlink-edit>.ctrl-tag-edit>select {width: 100%; box-sizing: border-box; margin-bottom: 4px;}
+.item-favlink-edit>.ctrl-tag-edit>input {width: 50%;}
+.item-favlink-edit>.ctrl-tag-edit>button {float: right;}

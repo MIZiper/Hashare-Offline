@@ -41,6 +41,7 @@
                     <button id="btn-showhash" data-prekey="showhash"></button>
                     <i class="font-btn" id="btn-addhash"></i>
                     <i class="font-btn" id="btn-save"></i>
+                    <i class="font-btn" id="btn-tagfilter"></i>
                 </div>
             </div>
             <div id="hash-rel-zone" class="zone side-zone">
@@ -136,6 +137,27 @@
                         <button type="button" id="btn-emptyimage" data-prekey="empty"></button>
                     </div>
                 </div>
+                <div class="picker" id="tag-filter">
+                    <p class="title" data-prekey="tagfilter"></p>
+                    <div class="content">
+                        <div id="tag-filter-panel">
+                            <label data-prekey="tagunit"></label>
+                            <select id="tag-filter-tagunit"></select>
+                            <label data-prekey="taglogic"></label>
+                            <select id="tag-filter-logic">
+                                <option value="all" data-prekey="taglogicAll"></option>
+                                <option value="one" data-prekey="taglogicOne"></option>
+                                <option value="notone" data-prekey="taglogicNotone"></option>
+                                <option value="notall" data-prekey="taglogicNotall"></option>
+                            </select>
+                            <button type="button" id="btn-addfilter" data-prekey="addfilter"></button>
+                        </div>
+                        <ul id="tag-filter-container"></ul>
+                    </div>
+                    <div class="panel">
+                        <button type="button" id="btn-emptyfilter" data-prekey="empty"></button>
+                    </div>
+                </div>
                 <div class="panel">
                     <button type="button" id="btn-picker-yes" data-prekey="yes"></button>
                     <button type="button" id="btn-picker-no" data-prekey="no"></button>
@@ -183,5 +205,6 @@
         <script type="text/javascript" src="script/Listener.js"></script>
         <script type="text/javascript" src="script/ItemControl.js"></script>
         <script type="text/javascript" src="script/Setting.js"></script>
+        <script type="text/javascript" src="script/Tag.js"></script>
     </body>
 </html>

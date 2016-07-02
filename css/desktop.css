@@ -21,6 +21,7 @@ i#btn-addhash:before {content: "\e006";}
 i#btn-additem:before {content: "\e006";}
 i#btn-itemtype:before {content: "\e001";}
 #btn-closedisplay:before {content: "\e009";}
+i#btn-tagfilter:before {content: "\e007";}
 
 body {margin: 0;}
 .blk {display: none; position: fixed; width: 100%; height: 100%;}
@@ -50,7 +51,7 @@ li.table:hover,li.table.hover {background-color: lightblue; color: white;}
 #table-blk>.side-zone {background-color: lightblue;}
 #table-rel-zone {height: 20%;}
 #table-rel-zone>.panel {position: absolute; bottom: 0; width: 100%;}
-#btn-addhash,#btn-save {float: right; margin: 12px; font-size: 1.2em;}
+#btn-addhash,#btn-save,#btn-tagfilter {float: right; margin: 12px; font-size: 1.2em;}
 #btn-showhash {float:left; margin: 12px; display: none;}
 #hash-rel-zone {height: 10%; bottom: 0; text-align: center;}
 #hash-zone {height: 70%; top: 20%; overflow-y: auto; border-top: 2px solid white; border-bottom: 2px solid white;}
@@ -84,9 +85,14 @@ div.picker,#edit-hash,#edit-table {display: none;}/*toggle*/
 #input-tablefile,#input-imagefile {display: none;}
 #editem-zone>.panel {text-align: right}
 #btn-pasteitem {float: left;}
-#image-picker-container {height: 300px; overflow-y: auto; margin: 0; padding: 0; width: 20em;}
-li.thumb {padding: 6px; display: inline-block;}
-li.thumb:hover {padding: 2px; border: 2px orange solid; margin: 2px;}
+#image-picker-container,#tag-filter-container {height: 300px; overflow-y: auto; margin: 0; padding: 0; width: 20em;}
+#tag-filter-container {height: 100px;}
+li.thumb,li.tagfilter {padding: 4px; margin: 2px; display: inline-block;}
+li.thumb:hover,li.tagfilter:hover {padding: 2px; border: 2px orange solid; margin: 2px;}
+li.tagfilter[data-logic=notall] {background-color: lightpink;}
+li.tagfilter[data-logic=notone] {background-color: lightgray;}
+li.tagfilter[data-logic=one] {background-color: deepskyblue;}
+li.tagfilter[data-logic=all] {background-color: lightgreen;}
 
 #popup-blk>#display-zone {position: fixed; height: 100%; width: 100%; background-color: transparent;}/*toggle*/
 #display-mask {position: absolute; height: 100%; opacity: 0.7; width: 100%; background-color: lightgray;}

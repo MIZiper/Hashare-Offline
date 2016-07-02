@@ -294,6 +294,7 @@ var CurrentTableClass = (function(){
     function C(tblStoreObj){
         this.TableStoreObject = tblStoreObj;
         this.HashStoreObjects = [];
+        this.Tag = {IsModified:false,Tags:[]};
     }
     
 //    C.prototype.DeleteHash = function(){}
@@ -302,9 +303,10 @@ var CurrentTableClass = (function(){
             this.HashStoreObjects.push(new HashStoreClass(hashes[i]));
         }
     }
-    C.prototype.FillHashStoreObjecs = function(callback){
+    C.prototype.Loading = function(callback){
         var tblStoreObj = this.TableStoreObject;
         var hashStoreObjs = this.HashStoreObjects;
+        var tag = this.Tag;
         
         var req = dbConn.transaction("Tables","readonly").objectStore("Tables").get(tblStoreObj.guid);
         req.onsuccess = function(evt){
@@ -312,6 +314,7 @@ var CurrentTableClass = (function(){
             for (var i in hashes) {
                 hashStoreObjs.push(new HashStoreClass(hashes[i]));
             }
+            tag.Tags = evt.target.result.tags || [];
             callback();
         }
         req.onerror = function(evt){console.log(evt);}
@@ -337,6 +340,7 @@ var CurrentTableClass = (function(){
     }
     C.prototype.End = function(test){
         var hashStoreObjs = this.HashStoreObjects;
+        var tag = this.Tag;
         var flag = false;
         for (var i in hashStoreObjs) {
             if (hashStoreObjs[i].IsModified) {
@@ -344,6 +348,7 @@ var CurrentTableClass = (function(){
                 break;
             }
         }
+        flag = flag || tag.IsModified;
         if (flag && !test) {
             var newHashStoreObjs = [];
             for (var i in hashStoreObjs) {
@@ -353,7 +358,8 @@ var CurrentTableClass = (function(){
                 }
             }
             this.HashStoreObjects = newHashStoreObjs;
-            var data = {guid:this.TableStoreObject.guid,Hashes:newHashStoreObjs};
+            var data = {guid:this.TableStoreObject.guid,Hashes:newHashStoreObjs,tags:tag.Tags};
+            tag.IsModified = false;
             var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").put(data);
             req.onsuccess = function(evt){}
             req.onerror = function(evt){console.log(evt);}
@@ -402,7 +408,7 @@ var CurrentUserClass = (function(){
     C.prototype.AddViaObject = function(obj) {
         var guid = MizGuid();
         
-        var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").add({guid:guid,Hashes:obj.Hashes});
+        var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").add({guid:guid,Hashes:obj.Hashes,tags:obj.tags});
         req.onsuccess = function(evt){}
         req.onerror = function(evt){console.log(evt);}
         
@@ -436,8 +442,7 @@ var CurrentUserClass = (function(){
     C.prototype.GenTableBlob = function(tblStoreObj,callback){
         var req = dbConn.transaction("Tables","readonly").objectStore("Tables").get(tblStoreObj.guid);
         req.onsuccess = function(evt){
-            var hashes = evt.target.result.Hashes;
-            var blob = MizParser.Object2Blob(hashes,tblStoreObj);
+            var blob = MizParser.Object2Blob(evt.target.result,tblStoreObj);
             callback(blob);
         }
         req.onerror = function(evt){console.log(evt);}
@@ -479,8 +484,8 @@ var dbConn,
 var MizParser = {
     HEADER:"!MIZip/Hashare-Offline;0",
     LINE:"\r\n",
-    Object2Blob:function(hashes,tblStoreObj){
-        var arr = [];
+    Object2Blob:function(data,tblStoreObj){
+        var arr = [], hashes = data.Hashes, tags = data.tags||[];
         arr.push(MizParser.HEADER+MizParser.LINE);
         arr.push("#"+tblStoreObj.GetValue()+MizParser.LINE);
         for (var i in hashes) {
@@ -492,6 +497,7 @@ var MizParser = {
                 arr.push(MizParser.LINE);
             }
         }
+        arr.push("~"+tags.join("|")+MizParser.LINE); // Please MizEncode
         return new Blob(arr,{type:"text/plain"});
     },
     Text2Object:function(text){
@@ -499,24 +505,28 @@ var MizParser = {
             arr = text.split(MizParser.LINE);
         if (arr[0]==MizParser.HEADER) {
             /*Seems BOM(3 bytes for UTF8) created by notepad doesn't affect*/
-            obj = {name:"",Hashes:[]};
+            obj = {name:"",Hashes:[],tags:[]};
             var currentHash;
             for (var i=1, l=arr.length; i<l; i++) {
                 switch (arr[i][0]) {
-                        case "#": {
-                            obj.name=arr[i].substr(1).split("|")[1].MizDecode();
-                            break;
-                        }
-                        case "*": {
-                            if (currentHash) obj.Hashes.push(currentHash);
-                            var a = arr[i].substr(1).split(";");
-                            currentHash = {type:a[1],name:a[0],ItemStrings:[]};
-                            break;
-                        }
-                        case "-": {
-                            if (currentHash) currentHash.ItemStrings.push(arr[i].substr(1));
-                            break;
-                        }
+                    case "#": {
+                        obj.name=arr[i].substr(1).split("|")[1].MizDecode();
+                        break;
+                    }
+                    case "*": {
+                        if (currentHash) obj.Hashes.push(currentHash);
+                        var a = arr[i].substr(1).split(";");
+                        currentHash = {type:a[1],name:a[0],ItemStrings:[]};
+                        // Why no MizDecode for the above name?
+                        break;
+                    }
+                    case "-": {
+                        if (currentHash) currentHash.ItemStrings.push(arr[i].substr(1));
+                        break;
+                    }
+                    case "~": {
+                        obj.tags = arr[i].substr(1).split("|"); // Please MizDecode
+                    }
                 }
             }
             if (currentHash) obj.Hashes.push(currentHash);

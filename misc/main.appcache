@@ -1,5 +1,5 @@
 CACHE MANIFEST
-#v0.6.11.5
+#v0.7.11.5
 /
 /css/items.css
 /css/desktop.css
@@ -12,6 +12,7 @@ CACHE MANIFEST
 /script/Listener.js
 /script/ItemControl.js
 /script/Setting.js
+/script/Tag.js
 /misc/whobody.png
 /misc/MizCopyFont.ttf
 /misc/MizCopyFont.woff

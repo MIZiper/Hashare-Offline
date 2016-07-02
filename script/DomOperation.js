@@ -19,7 +19,7 @@ var TableDom = {
     SwitchTo:function(srcEle){
         var tblTempObj = srcEle.MizObject;
         CurrentTableObject = new CurrentTableClass(tblTempObj.TableStoreObject);
-        CurrentTableObject.FillHashStoreObjecs(HashDom.Init);
+        CurrentTableObject.Loading(HashDom.Init);
         document.getElementById("table-name").textContent = tblTempObj.GetName();
         document.getElementById("main-blk").style.display="none";
         document.getElementById("table-blk").style.display="block";
@@ -135,6 +135,8 @@ var HashDom = {
         }
         u.appendChild(fragDoc);
         HashDom._ELE.appendChild(u);
+        
+        TagManager.Init(); // Weird to be here
     },
     SwtichTo:function(srcEle){
         if (srcEle==HashDom._lastEle) return;
@@ -246,9 +248,12 @@ var ItemDom = {
         srcEle.parentElement.removeChild(srcEle);
     },
     Clear:function(){
-        if (!CurrentHashObject) return;
-        CurrentHashObject.Tini();
+        if (CurrentHashObject==null) return;
+        if (CurrentHashObject) CurrentHashObject.Tini();
         CurrentHashObject = null;
+        /* Everywhere else use if (CurrentHashObjec).. !!0==false and !!null==false
+        but null!=0/false; So this is a trick for clear TagFilter result,
+        but should be a temporary trick. */
         var itemTypeObj;
         var itemDomObjs = ItemDom._ELE.querySelectorAll(".item");
         for (var i=0, l=itemDomObjs.length; i<l; i++) {
@@ -284,10 +289,14 @@ var ItemDom = {
         if (fromEle==toEle) return;
         var fromTypeObj = fromEle.MizObject,
             toTypeObj = toEle.MizObject;
-        CurrentHashObject.InsertBefore(fromTypeObj.ItemStringObject,toTypeObj.ItemStringObject);
+        if (CurrentHashObject) CurrentHashObject.InsertBefore(fromTypeObj.ItemStringObject,toTypeObj.ItemStringObject);
         fromEle.parentElement.insertBefore(fromEle,toEle);
     },
     Edit:function(srcEle,evt){
+        if (!CurrentHashObject) return;
+        /* The clause above owing to TagFilter, which makes CurrentHashObject to 0/false
+        but Items remaining. Need some methods to create real CurrentHashObject, for later's
+        copy/edit of filtered Items. Same in MoveBefore */
         var itemString = srcEle.MizObject.GetValue();
         MizUI.Editem.Show(CurrentHashObject.type,evt,itemString,(function(ele){
             var itemTypeObj = ele.MizObject;

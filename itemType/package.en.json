@@ -4,6 +4,11 @@
             "type":"verplan",
             "name":"Version Plan",
             "intro":"To write down the features planned and turn to history when they're implemented"
+        },
+        {
+            "type":"favlink",
+            "name":"Fav Link",
+            "intro":"This is a simple type that manage your favorite website links"
         }
     ]
 }

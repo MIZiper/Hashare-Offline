@@ -362,7 +362,7 @@ var TypesManager = {
             if (t) return;
             var xhr = new XMLHttpRequest();
             //xhr.responseType = "json";
-            xhr.open("get",MizLang.GetDefaultLang("set-package-path")+MizLang.GetDefaultLang("set-package-json"),false);
+            xhr.open("get",MizLang.GetDefaultLang("set-package-path")+MizLang.GetDefaultLang("set-package-json")+"?ts="+Date.now(),false);
             xhr.onreadystatechange = function(){
                 if (this.readyState == 4) {
                     if (this.status == 200) {
@@ -402,12 +402,12 @@ var TypesManager = {
                     req.onerror = function(evt){console.log(evt);}
                 }
             };
-        xhrjs.open("get",path+credential+".js");
+        xhrjs.open("get",path+credential+".js?ts="+Date.now());
         xhrjs.responseType = "blob";
         /* set responseType after open for ie, btw ie doesn't support responseType="json" */
         xhrjs.onreadystatechange = function(){
             if (this.readyState == 4) {
-                var b = new Blob([]);
+                var b = new Blob();
                 if (this.status == 200) {
                     b = this.response;
                 }
@@ -415,11 +415,11 @@ var TypesManager = {
             }
         }
         xhrjs.send();
-        xhrcss.open("get",path+credential+".css");
+        xhrcss.open("get",path+credential+".css?ts="+Date.now());
         xhrcss.responseType = "blob";
         xhrcss.onreadystatechange = function(){
             if (this.readyState == 4) {
-                var b = new Blob([]);
+                var b = new Blob();
                 if (this.status == 200) {
                     b = this.response;
                 }
@@ -434,8 +434,8 @@ var TypesManager = {
             return;
         }
         var req = dbConn.transaction("ItemTypes","readonly").objectStore("ItemTypes").openCursor(),
-            blobjs = new Blob([]),
-            blobcss = new Blob([]);
+            blobjs = new Blob([],{"type":"text/javascript"}),
+            blobcss = new Blob([],{"type":"text/css"});
         req.onsuccess = function(evt){
             var cur = evt.target.result;
             if (cur) {

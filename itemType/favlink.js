@@ -27,7 +27,7 @@ var ItemShow_FavLink = (function(){
     return C;
 })();
 
-var ItemEdit_VerPlan = (function(){
+var ItemEdit_FavLink = (function(){
     function C(itemStrObj){
         ItemTypeBase.call(this,itemStrObj,C.TYPENAME);
         this.SetCtrls(CtrlEdit_Link,CtrlEdit_Inputbox,CtrlEdit_Tag,[

@@ -364,6 +364,8 @@ var MizUI = {
     },
     _showFrame:function(frame,evt){
         frame.style.display = "block";
+        MizUI._frame_frame_ = frame;
+        MizUI._frame_evt_ = evt;
         var H = window.innerHeight,
             W = window.innerWidth,
             h = frame.clientHeight,
@@ -381,6 +383,13 @@ var MizUI = {
         }
         frame.style.top = Y+"px";
         frame.style.left = X+"px";
+    },
+    _frame_frame_: null,
+    _frame_evt_: null,
+    RefreshFrame:function(evt){
+        if (MizUI._frame_frame_!=null && MizUI._frame_frame_.style.display=='block') {
+            MizUI._showFrame(MizUI._frame_frame_, MizUI._frame_evt_);
+        }
     },
     _openSome:function(scope,type,value,yes,no){
         var thisSome = SomeManager.Get(type);

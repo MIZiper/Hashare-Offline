@@ -152,4 +152,5 @@ document.getElementById("btn-addhash").addEventListener("click",function(evt){
 document.getElementById("btn-additem").addEventListener("click",ItemDom.Add,false);
 document.getElementById("input-tablefile").addEventListener("change",TableDom.AddViaFile,false);
 
+window.addEventListener("resize",MizUI.RefreshFrame,false);
 document.body.onbeforeunload = TableDom.BeforeLeave;

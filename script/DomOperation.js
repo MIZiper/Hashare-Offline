@@ -35,36 +35,43 @@ var TableDom = {
     Save:function(){
         if (!EventManager.CanContinue(0)) return;
         if (CurrentHashObject) CurrentHashObject.End();
-        if (CurrentTableObject && CurrentTableObject.End()) MizUI.Message.Hint("sys-tablesaved");
+        CurrentTableObject && CurrentTableObject.End(function (err) {
+            if (err!=-1) MizUI.Message.Hint("sys-tablesaved");
+        });
     },
     Back:function(){
         if (!EventManager.CanContinue(0)) return;
         if (CurrentHashObject) CurrentHashObject.End();
         ItemDom.Clear();
-        if (CurrentTableObject && CurrentTableObject.End()) MizUI.Message.Hint("sys-tablesaved");
-        HashDom.Clear();
-        document.getElementById("table-blk").style.display="none";
-        document.getElementById("main-blk").style.display="block";
+        CurrentTableObject && CurrentTableObject.End(function (err) {
+            if (err!=-1) MizUI.Message.Hint("sys-tablesaved");
+            HashDom.Clear();
+            document.getElementById("table-blk").style.display="none";
+            document.getElementById("main-blk").style.display="block";
+        });
     },
     BeforeLeave:function(){
         if ((CurrentHashObject && CurrentHashObject.End(true)) ||
-            (CurrentTableObject && CurrentTableObject.End(true)))
+            (CurrentTableObject && CurrentTableObject.End()))
             return MizLang.GetDefaultLang("sys-unsavedetected");
     },
     /*
         Save & Back aren't parts of TableDom
     */
     Add:function(val){
-        var tblStoreObj = CurrentUserObject.AddTable(val);
-        var obj = new TableTempClass(tblStoreObj);
-        TableDom._ELE.children[0].appendChild(obj.TableDomObject);
+        CurrentUserObject.AddTable(val, function (tblStoreObj) {
+            if (!tblStoreObj) return; // messagebox the reason
+            var obj = new TableTempClass(tblStoreObj);
+            TableDom._ELE.children[0].appendChild(obj.TableDomObject);
+        });
     },
     AddViaText:function(text){
         var obj = MizParser.Text2Object(text);
         if (obj) {
-            var tblStoreObj = CurrentUserObject.AddViaObject(obj);
-            var tblTempObj = new TableTempClass(tblStoreObj);
-            TableDom._ELE.children[0].appendChild(tblTempObj.TableDomObject);
+            CurrentUserObject.AddViaObject(obj, function (tblStoreObj) {
+                var tblTempObj = new TableTempClass(tblStoreObj);
+                TableDom._ELE.children[0].appendChild(tblTempObj.TableDomObject);
+            })
         } else {
             MizUI.Message.Hint("sys-failtoparse");
         }
@@ -90,8 +97,8 @@ var TableDom = {
         MizUI.Edit.Table(evt,srcEle.textContent,(function(ele){
             var tblTempObj = ele.MizObject;
             return function(val){
-                tblTempObj.SetPartialValue(val);
-                CurrentUserObject.EditTable(tblTempObj.TableStoreObject,val);
+                tblTempObj.SetPartialValue(val["name"]);
+                CurrentUserObject.EditTable(tblTempObj.TableStoreObject, val["name"]);
                 /*
                     Why Table's Edit requires CurrentUserObject?
                     'cause TableTempObject.SetValue won't reflect to db/fs
@@ -101,8 +108,9 @@ var TableDom = {
         })(srcEle),null);
     },
     Down:function(srcEle){
-        var tblTempObj = srcEle.MizObject;
-        CurrentUserObject.GenTableBlob(tblTempObj.TableStoreObject,function(blob){
+        var tblTempObj = srcEle.MizObject,
+            tblStoreObj = tblTempObj.TableStoreObject;
+        tblStoreObj.Get(function (blob) {
             if (navigator.msSaveBlob) {
                 navigator.msSaveBlob(blob,tblTempObj.GetName()+".txt");
             } else {

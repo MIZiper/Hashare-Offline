@@ -89,8 +89,8 @@ var SyncDelegate = {
                 var counter = SyncDelegate._counterMaker(getVal.length);
                 for (var j in getVal) {
                     (function(tblStr){
-                        var tblStoreObj = new TableStoreClass(tblStr);
-                        CurrentUserObject.GenTableBlob(tblStoreObj,function(blob){
+                        var tblStoreObj = mizFileServerManager(tblStr);
+                        tblStoreObj.Get(function (blob) {
                             h.Upload(blob,tblStoreObj.name,counter);
                         });
                     })(getVal[j]);

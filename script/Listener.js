@@ -101,7 +101,10 @@ MenuManager.AddMenu("item",[
 SomeManager.Add(new SomeManager("edit-table",function(val){
     document.getElementById("input-tablename").value = val;
 },function(){
-    return document.getElementById("input-tablename").value;
+    return {
+        "type": "local",
+        "name": document.getElementById("input-tablename").value
+    }
 }));
 SomeManager.Add(new SomeManager("edit-hash",function(val){
     document.getElementById("input-hashname").value = val;

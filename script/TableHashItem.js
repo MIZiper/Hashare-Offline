@@ -159,7 +159,7 @@ var HashTempClass = (function(){
     are here.
     
 */
-
+/* This class has been replaced by FileServerClass
 var TableStoreClass = (function(){
     function C(tblStr){
         var a = tblStr.split("|");
@@ -178,6 +178,7 @@ var TableStoreClass = (function(){
     
     return C;
 })();
+*/
 
 var TableTempClass = (function(){
     function C(tableStoreObj){
@@ -308,16 +309,14 @@ var CurrentTableClass = (function(){
         var hashStoreObjs = this.HashStoreObjects;
         var tag = this.Tag;
         
-        var req = dbConn.transaction("Tables","readonly").objectStore("Tables").get(tblStoreObj.guid);
-        req.onsuccess = function(evt){
-            var hashes = evt.target.result.Hashes;
+        tblStoreObj.Open(function (obj) {
+            var hashes = obj["Hashes"];
             for (var i in hashes) {
                 hashStoreObjs.push(new HashStoreClass(hashes[i]));
             }
-            tag.Tags = evt.target.result.tags || [];
+            tag.Tags = obj["tags"] || [];
             callback();
-        }
-        req.onerror = function(evt){console.log(evt);}
+        });
     }
     C.prototype.AddHash = function(val){
         var defType = localStorage.getItem("default-type"),
@@ -338,7 +337,7 @@ var CurrentTableClass = (function(){
         this.HashStoreObjects.push(hashStoreObject);
         return hashStoreObject;
     }
-    C.prototype.End = function(test){
+    C.prototype.End = function(callback){
         var hashStoreObjs = this.HashStoreObjects;
         var tag = this.Tag;
         var flag = false;
@@ -349,7 +348,8 @@ var CurrentTableClass = (function(){
             }
         }
         flag = flag || tag.IsModified;
-        if (flag && !test) {
+        if (!callback) return flag;
+        if (flag) {
             var newHashStoreObjs = [];
             for (var i in hashStoreObjs) {
                 if (!hashStoreObjs[i].IsModified || hashStoreObjs[i].ItemStrings!=null) {
@@ -358,13 +358,14 @@ var CurrentTableClass = (function(){
                 }
             }
             this.HashStoreObjects = newHashStoreObjs;
-            var data = {guid:this.TableStoreObject.guid,Hashes:newHashStoreObjs,tags:tag.Tags};
             tag.IsModified = false;
-            var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").put(data);
-            req.onsuccess = function(evt){}
-            req.onerror = function(evt){console.log(evt);}
+            this.TableStoreObject.Save({
+                "Hashes": newHashStoreObjs,
+                "tags": tag.Tags
+            }, callback);
+        } else {
+            callback(-1);
         }
-        return flag;
     }
     C.prototype.Tini = function(){
         this.HashStoreObjects = null;
@@ -387,50 +388,41 @@ var CurrentUserClass = (function(){
             tblStrs = l.split(";");
         }
         for (var i=0, l=tblStrs.length; i<l; i++) {
-            tblStoreObjs.push(new TableStoreClass(tblStrs[i]));
+            tblStoreObjs.push(mizFileServerManager(tblStrs[i]));
         }
         this.TableStoreObjects = tblStoreObjs;
     }
     
-    C.prototype.AddTable = function(val){
-        var guid = MizGuid();
-        
-        var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").add({guid:guid,Hashes:[]});
-        req.onsuccess = function(evt){}
-        req.onerror = function(evt){console.log(evt);}
-        
-        var tblStr = guid+"|"+val.MizEncode();
-        var tblStoreObj = new TableStoreClass(tblStr);
-        this.TableStoreObjects.push(tblStoreObj);
-        this.flush();
-        return tblStoreObj;
+    C.prototype.AddTable = function (val, callback){
+        var fs = mizFileServerManager.get(val["type"]),
+            cuo = this;
+        fs.AddTable(val["name"], function (fsObj) {
+            cuo.TableStoreObjects.push(fsObj);
+            cuo.flush();
+            callback(fsObj);
+        });
     }
-    C.prototype.AddViaObject = function(obj) {
-        var guid = MizGuid();
-        
-        var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").add({guid:guid,Hashes:obj.Hashes,tags:obj.tags});
-        req.onsuccess = function(evt){}
-        req.onerror = function(evt){console.log(evt);}
-        
-        var tblStr = guid+"|"+obj.name.MizEncode();
-        var tblStoreObj = new TableStoreClass(tblStr);
-        this.TableStoreObjects.push(tblStoreObj);
-        this.flush();
-        return tblStoreObj;
+    C.prototype.AddViaObject = function(obj, callback) {
+        var fs = mizFileServerManager.get("local"),
+            cuo = this;
+        fs.AddTableViaObject(obj["name"], obj, function (fsObj) {
+            cuo.TableStoreObjects.push(fsObj);
+            cuo.flush();
+            callback(fsObj);
+        });
     }
     C.prototype.DeleteTable = function(tblStoreObj){
-        var req = dbConn.transaction("Tables","readwrite").objectStore("Tables").delete(tblStoreObj.guid);
-        req.onsuccess = function(evt){}
-        req.onerror = function(evt){console.log(evt);}
-        
-        var objs = this.TableStoreObjects;
-        for (var i in objs) {
-            if (objs[i]==tblStoreObj) {
-                objs[i] = null;
-                break;
+        var cuo = this;
+        tblStoreObj.Delete(function () {
+            var objs = cuo.TableStoreObjects;
+            for (var i in objs) {
+                if (objs[i]==tblStoreObj) {
+                    objs[i] = null;
+                    break;
+                }
             }
-        }
-        this.flush();
+            cuo.flush();
+        });
     }
     C.prototype.EditTable = function(tblStoreObj,val){
         /*
@@ -438,14 +430,6 @@ var CurrentUserClass = (function(){
             just flush and change the localStorage
         */
         this.flush();
-    }
-    C.prototype.GenTableBlob = function(tblStoreObj,callback){
-        var req = dbConn.transaction("Tables","readonly").objectStore("Tables").get(tblStoreObj.guid);
-        req.onsuccess = function(evt){
-            var blob = MizParser.Object2Blob(evt.target.result,tblStoreObj);
-            callback(blob);
-        }
-        req.onerror = function(evt){console.log(evt);}
     }
     C.prototype.flush = function(){
         var objs = this.TableStoreObjects;
@@ -484,10 +468,10 @@ var dbConn,
 var MizParser = {
     HEADER:"!MIZip/Hashare-Offline;0",
     LINE:"\r\n",
-    Object2Blob:function(data,tblStoreObj){
+    Object2Blob:function (data, name) {
         var arr = [], hashes = data.Hashes, tags = data.tags||[];
         arr.push(MizParser.HEADER+MizParser.LINE);
-        arr.push("#"+tblStoreObj.GetValue()+MizParser.LINE);
+        arr.push("#|"+name.MizEncode()+MizParser.LINE);
         for (var i in hashes) {
             arr.push("*"+hashes[i].name.MizEncode()+";"+hashes[i].type+MizParser.LINE);
             var itmStrs = hashes[i].ItemStrings;

@@ -145,8 +145,7 @@ document.getElementById("btn-showhash").addEventListener("click",function(){
 },false);
 
 document.getElementById("btn-addtable").addEventListener("click",function(evt){
-    if (!EventManager.CanContinue(0)) return;
-    MizUI.Edit.Table(evt,"",TableDom.Add,null);
+    hsoUI.AddTable.Open(evt, "", TableDom.Add, null);
 },false);
 document.getElementById("btn-addhash").addEventListener("click",function(evt){
     if (!EventManager.CanContinue(0)) return;

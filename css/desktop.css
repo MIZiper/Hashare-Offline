@@ -78,6 +78,11 @@ li.menu-item:hover {background-color: lightgray;}
 #alert-message>p {margin-top: 20%; padding: 2em; margin-bottom: 0; font-weight: bold; font-size: 1.2em; background-color: white; border-bottom: 2px solid lightblue;}
 #alert-message>.panel {padding: 1em 2em; text-align: right; background-color: white;}
 
+#popup-blk>#window-zone {display: block;}
+#window-zone>div.window {display:none; position: absolute; border: 2px solid black; background-color: lightblue; min-width: 20em; padding: 0.5em;}
+#window-zone>div.window>.all-panel {position: absolute; bottom: 0.5em; right: 0.5em;}
+div.window>.panel {margin-top: 12px; padding-top: 12px; border-top: 2px solid white;}
+
 #popup-blk>#edit-zone,#popup-blk>#editem-zone,#popup-blk>#picker-zone {border: 2px solid black; background-color: lightblue; min-width: 20em; padding: 0.5em;}/*toggle*/
 #edit-zone>.panel,#picker-zone>.panel {position: absolute; bottom: 0.5em; right: 0.5em;}
 div.picker,#edit-hash,#edit-table {display: none;}/*toggle*/

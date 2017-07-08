@@ -159,3 +159,8 @@ var mizFileServerManager = (function () {
 
     return fileservermanager
 })();
+
+hsoUI.AddTable.RegisterServers([
+    {"name": "Local", "value": "local"},
+    {"name": "MIZip.net", "value": "mizip"}
+]);

@@ -3,7 +3,9 @@
         "langs": ["zh-cn", "en"],
         "pack": {
             "ui-yes": ["", "Yes"],
-            "ui-no": ["", "No"]
+            "ui-no": ["", "No"],
+            "ui-addtable": ["", "Add Table"],
+            "ui-import": ["", "Import"]
         }
     }
     MizLang.AddLangsPack(langsPack);
@@ -58,15 +60,23 @@ var mizUIWindow = (function () {
     var uiStack = [];
     function uiEvent(obj, action) {
         return function (evt) {
-            var lastDom = uiStack.pop();
-            if (obj.dom == lastDom) {
+            var last = uiStack.pop();
+            if (obj == last) {
                 action.call(obj);
             } else {
-                uiStack.push(lastDom);
+                uiStack.push(last);
             }
         }
     }
-    // handle the ESC/Enter event
+    document.body.addEventListener("keydown", function (evt) {
+        var last = uiStack.pop();
+        if (last) {
+            if (evt.which==27)
+                last.No();
+            else if (evt.which==13)
+                last.Yes();
+        }
+    }, false);
 
     function uiwindow(titleKey, hostDom) {
         mizUIFrame.call(this);
@@ -139,7 +149,7 @@ var mizUIWindow = (function () {
     }
 
     uiwindow.prototype.Open = function (evt, val, yesCallback, noCallback) {
-        uiStack.push(this.dom);
+        uiStack.push(this);
         this.Show(evt.clientX, evt.clientY);
         this.setValue(val);
         this.yesCallback = yesCallback;
@@ -150,7 +160,7 @@ var mizUIWindow = (function () {
 })();
 
 var mizUIMenu = (function () {
-    function uimenu(menuItems, domParent = null) {
+    function uimenu(menuItems, domParent) {
         // menuItems: [{title, func}]
         mizUIFrame.call(this);
         this.domParent = domParent;
@@ -181,15 +191,6 @@ var mizUIMenu = (function () {
 
 var hsoUI = {
     AddTable: (function (hostDom) {
-        var langsPack = {
-            "langs": ["zh-cn", "en"],
-            "pack": {
-                "ui-addtable": ["", "Add Table"],
-                "ui-import": ["", "Import"]
-            }
-        }
-        MizLang.AddLangsPack(langsPack);
-
         var addTableWindow = new mizUIWindow("ui-addtable", hostDom);
 
         var fragEle = document.createDocumentFragment(),

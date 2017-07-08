@@ -281,47 +281,6 @@ var MizUI = {
         },
         LastDom:null
     },
-    Edit:{
-        _yesCallback:null,
-        _noCallback:null,
-        _editDom:document.getElementById("edit-zone"),
-        _lastSome:null,
-        _keyShortCut:function(evt){
-            if (evt.which==27)
-                MizUI.Edit.No();
-            else if (evt.which==13)
-                MizUI.Edit.Yes();
-        },
-        _show:function(type,evt,val,yesCallback,noCallback){
-            MizUI._openSome(MizUI.Edit,type,val,yesCallback,noCallback);
-            MizUI._showFrame(MizUI.Edit._editDom,evt);
-            document.body.addEventListener("keydown",MizUI.Edit._keyShortCut,false);
-            EventManager.SetLevel(1);
-        },
-        _close:function(){
-            document.body.removeEventListener("keydown",MizUI.Edit._keyShortCut,false);
-            MizUI.Edit._editDom.style.display = "none";
-            EventManager.SetLevel(0);
-        },
-        Table:function(evt,val,yesCallback,noCallback){
-            MizUI.Edit._show("edit-table",evt,val,yesCallback,noCallback);
-            document.getElementById("input-tablename").focus();
-        },
-        Hash:function(evt,val,yesCallback,noCallback){
-            MizUI.Edit._show("edit-hash",evt,val,yesCallback,noCallback);
-            document.getElementById("input-hashname").focus();
-        },
-        Yes:function(evt){
-            var func = MizUI.Edit._yesCallback;
-            var val = MizUI.Edit._lastSome.GetValue();
-            func(val);
-            MizUI.Edit._close();
-        },
-        No:function(evt){
-            if (MizUI.Edit._noCallback) MizUI.Edit._noCallback();
-            MizUI.Edit._close();
-        }
-    },
     Editem:{
         _editemDom:document.getElementById("editem-zone"),
         _yesCallback:null,

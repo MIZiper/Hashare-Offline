@@ -98,19 +98,6 @@ MenuManager.AddMenu("item",[
     {key:"sys-move",func:MoveManager.MoveStart}
 ]);
 
-SomeManager.Add(new SomeManager("edit-table",function(val){
-    document.getElementById("input-tablename").value = val;
-},function(){
-    return {
-        "type": "local",
-        "name": document.getElementById("input-tablename").value
-    }
-}));
-SomeManager.Add(new SomeManager("edit-hash",function(val){
-    document.getElementById("input-hashname").value = val;
-},function(){
-    return document.getElementById("input-hashname").value;
-}));
 SomeManager.Add(new SomeManager("date-picker",Picker.Date.SetValue,Picker.Date.GetValue));
 SomeManager.Add(new SomeManager("image-picker",Picker.Image.SetValue,Picker.Image.GetValue));
 SomeManager.Add(new SomeManager("image-display",Display.Image.SetValue,Display.Image.GetValue));
@@ -128,8 +115,6 @@ document.getElementById("btn-alert-yes").addEventListener("click",MizUI.Message.
 document.getElementById("btn-alert-no").addEventListener("click",MizUI.Message.AlertNo,false);
 document.getElementById("btn-picker-yes").addEventListener("click",MizUI.Picker.Yes,false);
 document.getElementById("btn-picker-no").addEventListener("click",MizUI.Picker.No,false);
-document.getElementById("btn-edit-yes").addEventListener("click",MizUI.Edit.Yes,false);
-document.getElementById("btn-edit-no").addEventListener("click",MizUI.Edit.No,false);
 document.getElementById("btn-editem-yes").addEventListener("click",MizUI.Editem.Yes,false);
 document.getElementById("btn-editem-no").addEventListener("click",MizUI.Editem.No,false);
 document.getElementById("btn-closedisplay").addEventListener("click",MizUI.Display.Close,false);
@@ -148,8 +133,7 @@ document.getElementById("btn-addtable").addEventListener("click",function(evt){
     hsoUI.AddTable.Open(evt, "", TableDom.Add, null);
 },false);
 document.getElementById("btn-addhash").addEventListener("click",function(evt){
-    if (!EventManager.CanContinue(0)) return;
-    MizUI.Edit.Hash(evt,"",HashDom.Add,null);
+    hsoUI.AddHash.Open(evt, "", HashDom.Add, null);
 },false);
 document.getElementById("btn-additem").addEventListener("click",ItemDom.Add,false);
 document.getElementById("input-tablefile").addEventListener("change",TableDom.AddViaFile,false);

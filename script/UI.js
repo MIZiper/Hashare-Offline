@@ -5,7 +5,9 @@
             "ui-yes": ["", "Yes"],
             "ui-no": ["", "No"],
             "ui-addtable": ["", "Add Table"],
-            "ui-import": ["", "Import"]
+            "ui-import": ["", "Import"],
+            "ui-addhash": ["", "Add Hash"],
+            "ui-paste": ["", "Paste"]
         }
     }
     MizLang.AddLangsPack(langsPack);
@@ -75,6 +77,8 @@ var mizUIWindow = (function () {
                 last.No();
             else if (evt.which==13)
                 last.Yes();
+            else
+                uiStack.push(last);
         }
     }, false);
 
@@ -154,6 +158,7 @@ var mizUIWindow = (function () {
         this.setValue(val);
         this.yesCallback = yesCallback;
         this.noCallback = noCallback;
+        this.dom.querySelector("input, textarea, select, button").focus();
     }
 
     return uiwindow;
@@ -202,12 +207,15 @@ var hsoUI = {
         addTableWindow.SetContent(fragEle);
 
         var fragEle = document.createDocumentFragment(),
+            btnFile = document.createElement("input"),
             btnImport = document.createElement("button"),
             cmbServer = document.createElement("select");
-        btnImport.type = "button";
+        btnImport.type = "button"; btnImport.id = "btn-tablefile";
+        btnFile.type = "file"; btnFile.id = "input-tablefile";
+        btnFile.multiple = true;
         btnImport.textContent = MizLang.GetDefaultLang("ui-import");
         // add event listener for import
-        fragEle.ChainAppend(cmbServer).ChainAppend(btnImport);
+        fragEle.ChainAppend(cmbServer).ChainAppend(btnImport).ChainAppend(btnFile);
         addTableWindow.SetPanel(fragEle);
 
         addTableWindow.SetGet(
@@ -234,5 +242,34 @@ var hsoUI = {
         }
 
         return addTableWindow;
+    })(document.getElementById("window-zone")),
+    AddHash: (function (hostDom) {
+        var addHashWindow = new mizUIWindow("ui-addhash", hostDom);
+
+        var fragEle = document.createDocumentFragment(),
+            inputName = document.createElement("input"),
+            lblName = document.createElement("label");
+        inputName.type = "text";
+        lblName.textContent = MizLang.GetDefaultLang("ui-addhash");
+        fragEle.ChainAppend(lblName).ChainAppend(inputName);
+        addHashWindow.SetContent(fragEle);
+
+        var fragEle = document.createDocumentFragment(),
+            btnPaste = document.createElement("button");
+        btnPaste.type = "button"; btnPaste.id = "btn-pastehash";
+        btnPaste.textContent = MizLang.GetDefaultLang("ui-paste");
+        fragEle.appendChild(btnPaste);
+        addHashWindow.SetPanel(fragEle);
+
+        addHashWindow.SetGet(
+            function (name) {
+                inputName.value = name;
+            },
+            function () {
+                return inputName.value;
+            }
+        );
+
+        return addHashWindow;
     })(document.getElementById("window-zone"))
 }

@@ -91,10 +91,10 @@ var TableDom = {
                 freader.readAsText(files[index]);
             }
         })(fs,0);
-        MizUI.Edit.No();
+        hsoUI.AddTable.No();
     },
     Edit:function(srcEle,evt){
-        MizUI.Edit.Table(evt,srcEle.textContent,(function(ele){
+        hsoUI.AddTable.Open(evt, srcEle.textContent, (function (ele) {
             var tblTempObj = ele.MizObject;
             return function(val){
                 tblTempObj.SetPartialValue(val["name"]);
@@ -193,7 +193,7 @@ var HashDom = {
         */
     },
     Edit:function(srcEle,evt){
-        MizUI.Edit.Hash(evt,srcEle.textContent,(function(ele){
+        hsoUI.AddHash.Open(evt, srcEle.textContent, (function (ele) {
             var hashTempObj = ele.MizObject;
             return function(val){
                 hashTempObj.SetPartialValue(val);
@@ -212,7 +212,7 @@ var HashDom = {
             var obj = new HashTempClass(hashStoreObj);
             HashDom._ELE.children[0].appendChild(obj.HashDomObject);
             HashDom._copiedHash.ItemStrings = null;
-            MizUI.Edit.No();
+            hsoUI.AddHash.No();
         } else {
             MizUI.Message.Hint("sys-nohashcopied");
         }

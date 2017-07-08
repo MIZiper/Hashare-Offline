@@ -83,10 +83,10 @@ li.menu-item:hover {background-color: lightgray;}
 #window-zone>div.window>.all-panel {position: absolute; bottom: 0.5em; right: 0.5em;}
 div.window>.panel {margin-top: 12px; padding-top: 12px; border-top: 2px solid white;}
 
-#popup-blk>#edit-zone,#popup-blk>#editem-zone,#popup-blk>#picker-zone {border: 2px solid black; background-color: lightblue; min-width: 20em; padding: 0.5em;}/*toggle*/
-#edit-zone>.panel,#picker-zone>.panel {position: absolute; bottom: 0.5em; right: 0.5em;}
-div.picker,#edit-hash,#edit-table {display: none;}/*toggle*/
-#editem-zone>.panel,#edit-table>.panel,#edit-hash>.panel,div.picker>.panel {margin-top: 12px; padding-top: 12px; border-top: 2px solid white;}
+#popup-blk>#editem-zone,#popup-blk>#picker-zone {border: 2px solid black; background-color: lightblue; min-width: 20em; padding: 0.5em;}/*toggle*/
+#picker-zone>.panel {position: absolute; bottom: 0.5em; right: 0.5em;}
+div.picker {display: none;}/*toggle*/
+#editem-zone>.panel,div.picker>.panel {margin-top: 12px; padding-top: 12px; border-top: 2px solid white;}
 #input-tablefile,#input-imagefile {display: none;}
 #editem-zone>.panel {text-align: right}
 #btn-pasteitem {float: left;}
@@ -120,6 +120,7 @@ li.tagfilter[data-logic=all] {background-color: lightgreen;}
     #item-zone {box-sizing: border-box; height: 100%; border-top: 7em solid transparent; border-bottom: 5em solid transparent; background-color: white; display: none;}
     
     #popup-blk>.zone {width: 100%; box-sizing: border-box;}
+    #window-zone>div.window {width: 100%; box-sizing: border-box;}
     #hint-message {top: 0; left: 0; width: 100%; right: auto; bottom: auto;}
     
     #image-picker-container {width: 100%;}

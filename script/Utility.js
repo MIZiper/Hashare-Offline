@@ -154,6 +154,12 @@ Element.prototype.MizUpTo = function(className) {
     if (this.classList.contains(className)) return this;
     else return this.parentElement ? this.parentElement.MizUpTo(className) : false;
 }
+Node.prototype.ChainAppend = function (ele) {
+    this.appendChild(ele);
+    var t = document.createTextNode(" ");
+    this.appendChild(t);
+    return this;
+}
 
 var MizGuid = function(bt){
     var b = bt || 8;

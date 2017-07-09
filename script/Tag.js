@@ -223,10 +223,13 @@ Picker.TagFilter = (function(){
         var li = evt.target.MizUpTo("tagfilter");
         if (!li) return;
         evt.preventDefault();
-        MizUI.Menu.Open("picker-tagfilter",evt,li);
+        hsoUI.PickerTagFilterMenu.Open(evt, li);
     }
     
-    MenuManager.AddMenu("picker-tagfilter",[{key:"sys-delete",func:DelFilter}]);
+    hsoUI.PickerTagFilterMenu.AppendItems([{
+        "title": MizLang.GetDefaultLang("sys-delete"),
+        "func": DelFilter
+    }]);
     eleContainer.addEventListener("contextmenu",tagContext,false);
     eleContainer.addEventListener("click",function(evt){
         if (evt.target.classList.contains("btn-context")) {

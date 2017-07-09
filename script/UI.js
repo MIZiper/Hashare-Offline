@@ -165,15 +165,54 @@ var mizUIWindow = (function () {
 })();
 
 var mizUIMenu = (function () {
-    function uimenu(menuItems, domParent) {
-        // menuItems: [{title, func}]
+    var uiStack = [];
+    document.body.addEventListener("click", function (evt) {
+        var last = uiStack.pop();
+        if (last) {
+            var li = evt.target.MizUpTo("menu-item");
+            if (li) {
+                var func = li.MizObject;
+                func(last.relEle, evt);
+            }
+            // this will cause problem if more than one menu is opened
+
+            if (last.relEle) last.relEle.classList.remove("hover");
+            last.relEle = null;
+            last.Close();
+        }
+        // will the menu show when clicking btn-context between different ele?
+        // yes, because evt.stopPropagation()
+    }, false);
+
+    function uimenu(hostDom) {
         mizUIFrame.call(this);
-        this.domParent = domParent;
+        this.alwaysShrink = true;
         var ul = document.createElement("ul");
         ul.className = "menu";
         this.dom = ul;
-        this.AppendItems(menuItems);
+        this.relEle = null;
+        hostDom.appendChild(ul);
+
+        /*
+        ul.addEventListener("click", (function (obj) {
+            return function (evt) {
+                var li = evt.target.MizUpTo("menu-item");
+                if (li) {
+                    var func = li.MizObject;
+                    func(obj.relEle, evt);
+                }
+            }
+        })(this), false);
+        */
+        // can bind the event listener to hostDom, but hard to find relEle
     }
+
+    uimenu.IsOn = function () {
+        return uiStack.length>0;
+    }
+
+    uimenu.prototype = Object.create(mizUIFrame.prototype);
+    uimenu.prototype.constructor = uimenu;
 
     uimenu.prototype.AppendItems = function (menuItems) {
         // menuItems: [{title, func}]
@@ -189,6 +228,19 @@ var mizUIMenu = (function () {
             }
         }
         this.dom.appendChild(fragEle);
+    }
+
+    uimenu.prototype.Open = function (evt, relEle) {
+        uiStack.push(this);
+        if (this.relEle!=relEle) {
+            if (this.relEle) {
+                this.relEle.classList.remove("hover");
+            }
+            this.relEle = relEle;
+            if (relEle) relEle.classList.add("hover");
+        }
+        
+        this.Show(evt.clientX, evt.clientY);
     }
 
     return uimenu;
@@ -271,5 +323,12 @@ var hsoUI = {
         );
 
         return addHashWindow;
-    })(document.getElementById("window-zone"))
+    })(document.getElementById("window-zone")),
+    // there's no need to define menu object here.
+    TableMenu: new mizUIMenu(document.getElementById("menu-zone")),
+    HashMenu: new mizUIMenu(document.getElementById("menu-zone")),
+    ItemMenu: new mizUIMenu(document.getElementById("menu-zone")),
+    ItemTypeMenu: new mizUIMenu(document.getElementById("menu-zone")),
+    PickerImageMenu: new mizUIMenu(document.getElementById("menu-zone")),
+    PickerTagFilterMenu: new mizUIMenu(document.getElementById("menu-zone"))
 }

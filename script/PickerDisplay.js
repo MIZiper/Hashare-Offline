@@ -105,14 +105,15 @@ var Picker = {
             ImageManager.Delete(ele.getAttribute("data-guid"));
         }
         
-        MenuManager.AddMenu("picker-image",[
-            {key:"sys-delete",func:DelImage}
-        ]);
+        hsoUI.PickerImageMenu.AppendItems([{
+            "title": MizLang.GetDefaultLang("sys-delete"),
+            "func": DelImage
+        }]);
         var thumbContext = function(evt){
             var li = evt.target.MizUpTo("thumb");
             if (!li) return;
             evt.preventDefault();
-            MizUI.Menu.Open("picker-image",evt,li);
+            hsoUI.PickerImageMenu.Open(evt, li);
         }
         container.addEventListener("contextmenu",thumbContext,false);
         container.addEventListener("click",function(evt){

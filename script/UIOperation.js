@@ -1,48 +1,3 @@
-var MenuManager = {
-    _menuDom:document.getElementById("menu-zone"),
-    Menus:[],
-    AddMenu:function(type,menusInfo){
-        /*[{key,func},{key,func}]*/
-        var ul = document.createElement("ul");
-        ul.className = "menu";
-        var fragEle = document.createDocumentFragment();
-        for (var i in menusInfo) {
-            var li = document.createElement("li");
-            li.textContent = MizLang.GetDefaultLang(menusInfo[i].key);
-            li.className = "menu-item";
-            li.MizBind(menusInfo[i].func);
-            fragEle.appendChild(li);
-        }
-        ul.appendChild(fragEle);
-        this._menuDom.appendChild(ul);
-        this.Menus[type] = ul;
-    },
-    CurrentMenu:null,
-    HideMenu:function(menu){
-        if (menu) menu.style.display="none";
-    },
-    ShowMenu:function(menu){
-        if (menu) menu.style.display="block";
-    },
-    SwitchToMenu:function(type){
-        if (this.Menus[type]!=this.CurrentMenu) {
-            this.HideMenu(this.CurrentMenu);
-            this.ShowMenu(this.Menus[type]);
-            this.CurrentMenu = this.Menus[type];
-        }
-    },
-    AppendMenuItem:function(type,menuInfo){
-        /*{title,func}*/
-        if (this.Menus[type]) {
-            var li = document.createElement("li");
-            li.textContent = menuInfo.title;
-            li.className = "menu-item";
-            li.MizBind(menuInfo.func);
-            this.Menus[type].appendChild(li);
-        }
-    }
-}
-
 var EditemManager = {
     Editems:[],
     CurrentEditem:null,
@@ -248,39 +203,6 @@ var MizUI = {
             if (MizUI.Picker._noCallback) MizUI.Picker._noCallback();
         }
     },
-    Menu:{
-        MenuOn:false,
-        _menuDom:document.getElementById("menu-zone"),
-        Close:function(){
-            MizUI.Menu.MenuOn = false;
-            document.body.removeEventListener("click",MizUI.Menu.Close,false);
-            if (MizUI.Menu.LastDom) MizUI.Menu.LastDom.classList.remove("hover");
-            MizUI.Menu.LastDom = null;
-            MizUI.Menu._menuDom.style.display = "none";
-            /*
-                Cannot use 'this' here 'cause 'this' refers to document.body
-                when this function called by event
-            */
-        },
-        Open:function(type,evt,newDom){
-            MenuManager.SwitchToMenu(type);
-            
-            if (MizUI.Menu.LastDom!=newDom) {
-                if (MizUI.Menu.LastDom) {
-                    MizUI.Menu.LastDom.classList.remove("hover");
-                }
-                MizUI.Menu.LastDom = newDom;
-                if (newDom) newDom.classList.add("hover");
-            }
-            if (!MizUI.Menu.MenuOn) {
-                document.body.addEventListener("click",MizUI.Menu.Close,false);
-                MizUI.Menu.MenuOn = true;
-            }
-            
-            MizUI._showFrame(MizUI.Menu._menuDom,evt);
-        },
-        LastDom:null
-    },
     Editem:{
         _editemDom:document.getElementById("editem-zone"),
         _yesCallback:null,
@@ -333,7 +255,7 @@ var MizUI = {
             y = evt.clientY,
             X = 0,
             Y = 0;
-        if (W>800 || frame==MizUI.Menu._menuDom) {
+        if (W>800) {
             if (x+w>W) X=x-w; else X=x;
             if (y+h>H) Y=y-h; else Y=y;
         } else {

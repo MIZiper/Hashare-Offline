@@ -66,8 +66,8 @@ li.hash:hover,li.hash.hover {background-color: white; color: lightblue;}
 p.title {font-weight: bold;}
 div.content {text-align: center;}
 
-#popup-blk>#menu-zone {border: 2px solid black; width: 10em; max-height: 10em; overflow-y: auto; padding: 0.5em 0; z-index: 99;}/*toggle*/
-ul.menu {display: none; margin: 0; padding: 0;}/*toggle*/
+#popup-blk>#menu-zone {display: block;}/*toggle*/
+ul.menu {background-color: white; display: none; position: absolute; border: 2px solid black; width: 10em; max-height: 10em; overflow-y: auto; padding: 0.5em 0; z-index: 99; margin: 0;}/*toggle*/
 li.menu-item {list-style: none; padding: 0.7em; font-weight: bold;}
 li.menu-item:hover {background-color: lightgray;}
 

@@ -3,19 +3,19 @@
         var tblDom = evt.target.MizUpTo("table");
         if (!(EventManager.CanContinue(0) && tblDom)) return;
         evt.preventDefault();
-        MizUI.Menu.Open("table",evt,tblDom);
+        hsoUI.TableMenu.Open(evt, tblDom);
     }
     var hashContext = function(evt){
         var hashDom = evt.target.MizUpTo("hash");
         if (!(EventManager.CanContinue(0) && hashDom)) return;
         evt.preventDefault();
-        MizUI.Menu.Open("hash",evt,hashDom);
+        hsoUI.HashMenu.Open(evt, hashDom);
     }
     var itemContext = function(evt){
         var itemDom = evt.target.MizUpTo("item");
         if (!(EventManager.CanContinue(0) && itemDom)) return;
         evt.preventDefault();
-        MizUI.Menu.Open("item",evt,itemDom);
+        hsoUI.ItemMenu.Open(evt, itemDom);
     }
     document.getElementById("table-zone").addEventListener("click",function(evt){
         if (evt.target.classList.contains("btn-context")) {
@@ -25,7 +25,7 @@
         }
         var tblDom = evt.target.MizUpTo("table");
         if (!(EventManager.CanContinue(0) && tblDom)) return;
-        if (!MizUI.Menu.MenuOn) {
+        if (!mizUIMenu.IsOn()) {
             TableDom.SwitchTo(tblDom);
             ItemDom._ELE.style.display = "none";
         }
@@ -39,7 +39,7 @@
         }
         var hashDom = evt.target.MizUpTo("hash");
         if (!(EventManager.CanContinue(0) && hashDom)) return;
-        if (!MizUI.Menu.MenuOn) {
+        if (!mizUIMenu.IsOn()) {
             HashDom.SwtichTo(hashDom);
             ItemDom._ELE.style.display = "block";
         }
@@ -56,47 +56,35 @@
 
 document.getElementById("btn-itemtype").addEventListener("click",function(evt){
     if (!EventManager.CanContinue(0)) return;
-    MizUI.Menu.Open("itemType",evt,null);
+    hsoUI.ItemTypeMenu.Open(evt, null);
     evt.stopPropagation();
 },false);
-document.getElementById("menu-zone").addEventListener("click",function(evt){
-    var li = evt.target.MizUpTo("menu-item");
-    if (li) {
-        var func = li.MizObject;
-        func(MizUI.Menu.LastDom,evt);
-    }
-    /*
-        MizUI.Menu.Close();
-        document.body.click will handle the close issue
-    */
-},false);
 
-MenuManager.AddMenu("table",[
-    {key:"sys-edit",func:TableDom.Edit},
-    {key:"sys-delete",func:TableDom.Delete},
-    {key:"sys-down",func:TableDom.Down}
+hsoUI.TableMenu.AppendItems([
+    {"title": MizLang.GetDefaultLang("sys-edit"), "func": TableDom.Edit},
+    {"title": MizLang.GetDefaultLang("sys-delete"), "func": TableDom.Delete},
+    {"title": MizLang.GetDefaultLang("sys-down"), "func": TableDom.Down}
 ]);
-MenuManager.AddMenu("hash",[
-    {key:"sys-edit",func:HashDom.Edit},
-    {key:"sys-delete",func:HashDom.Delete},
-    {key:"sys-copy",func:HashDom.Copy}
+hsoUI.HashMenu.AppendItems([
+    {"title": MizLang.GetDefaultLang("sys-edit"), "func": HashDom.Edit},
+    {"title": MizLang.GetDefaultLang("sys-delete"), "func": HashDom.Delete},
+    {"title": MizLang.GetDefaultLang("sys-copy"), "func": HashDom.Copy}
 ]);
-MenuManager.AddMenu("itemType",{});
+hsoUI.ItemMenu.AppendItems([
+    {"title": MizLang.GetDefaultLang("sys-edit"), "func": ItemDom.Edit},
+    {"title": MizLang.GetDefaultLang("sys-delete"), "func": ItemDom.Delete},
+    {"title": MizLang.GetDefaultLang("sys-copy"), "func": ItemDom.Copy},
+    {"title": MizLang.GetDefaultLang("sys-move"), "func": MoveManager.MoveStart}
+]);
 ItemType.AddTypeListener(function(info){
     var prefTypes = localStorage.getItem("preferred-types");
     if (!prefTypes || (prefTypes.indexOf(info.type)!=-1)) //caution that one typeName might be a subset of another
-        MenuManager.AppendMenuItem("itemType",{
-            title:info.name,
-            func:(function(type){return function(){ItemDom.SwitchToType(type);}})(info.type)
-        });
+        hsoUI.ItemTypeMenu.AppendItems([{
+            "title": info.name,
+            "func": (function(type){return function(){ItemDom.SwitchToType(type);}})(info.type)
+        }]);
     /*Judge here whether the newly registered type is in user's favorite list*/
 });
-MenuManager.AddMenu("item",[
-    {key:"sys-edit",func:ItemDom.Edit},
-    {key:"sys-delete",func:ItemDom.Delete},
-    {key:"sys-copy",func:ItemDom.Copy},
-    {key:"sys-move",func:MoveManager.MoveStart}
-]);
 
 SomeManager.Add(new SomeManager("date-picker",Picker.Date.SetValue,Picker.Date.GetValue));
 SomeManager.Add(new SomeManager("image-picker",Picker.Image.SetValue,Picker.Image.GetValue));

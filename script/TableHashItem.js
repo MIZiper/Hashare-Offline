@@ -424,6 +424,10 @@ var CurrentUserClass = (function(){
             cuo.flush();
         });
     }
+    C.prototype.LinkTable = function (fsObj) {
+        this.TableStoreObjects.push(fsObj);
+        this.flush();
+    }
     C.prototype.EditTable = function(tblStoreObj,val){
         /*
             tblStoreObj has been modified using tblTempObj.SetPartialValue

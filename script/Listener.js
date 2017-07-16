@@ -110,9 +110,7 @@ document.getElementById("btn-backmain").addEventListener("click",TableDom.Back,f
 document.getElementById("btn-save").addEventListener("click",TableDom.Save,false);
 document.getElementById("btn-pasteitem").addEventListener("click",ItemDom.Paste,false);
 document.getElementById("btn-pastehash").addEventListener("click",HashDom.Paste,false);
-document.getElementById("btn-tablefile").addEventListener("click",function(){
-    document.getElementById("input-tablefile").click();
-},false);
+document.getElementById("btn-tablefile").addEventListener("click",TableDom.ImportTable,false);
 document.getElementById("btn-showhash").addEventListener("click",function(){
     ItemDom._ELE.style.display = "none";
 },false);

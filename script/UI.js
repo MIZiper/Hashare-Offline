@@ -7,7 +7,9 @@
             "ui-addtable": ["", "Add Table"],
             "ui-import": ["", "Import"],
             "ui-addhash": ["", "Add Hash"],
-            "ui-paste": ["", "Paste"]
+            "ui-paste": ["", "Paste"],
+            "ui-remotelist": ["", "Files List"],
+            "ui-getentity": ["", "Down Entity"]
         }
     }
     MizLang.AddLangsPack(langsPack);
@@ -323,6 +325,52 @@ var hsoUI = {
         );
 
         return addHashWindow;
+    })(document.getElementById("window-zone")),
+    RemoteFilesList: (function (hostDom) {
+        var remoteList = new mizUIWindow("ui-remotelist", hostDom);
+
+        var listFiles = document.createElement("select");
+        listFiles.size = 7; listFiles.multiple = true;
+        listFiles.style.width = "100%";
+        remoteList.SetContent(listFiles);
+
+        var fragEle = document.createDocumentFragment(),
+            chkEntity = document.createElement("input"),
+            lblEntity = document.createElement("label");
+        chkEntity.type = "checkbox";
+        lblEntity.textContent = MizLang.GetDefaultLang("ui-getentity");
+        lblEntity.appendChild(chkEntity);
+        fragEle.appendChild(lblEntity);
+        //fragEle.ChainAppend(chkEntity).ChainAppend(lblEntity);
+        remoteList.SetPanel(fragEle);
+
+        remoteList.SetGet(
+            function (val) {
+                var e,
+                    fragEle = document.createDocumentFragment();
+                while (e=listFiles.firstChild) listFiles.removeChild(e);
+                for (var i in val) {
+                    var o = document.createElement("option");
+                    o.value = val[i]["guid"];
+                    o.textContent = val[i]["name"];
+                    fragEle.appendChild(o);
+                }
+                listFiles.appendChild(fragEle);
+            },
+            function () {
+                var r = [],
+                    opt = listFiles.firstChild;
+                while (opt) {
+                    if (opt.selected) {
+                        r.push({"guid": opt.value, "name": opt.textContent});
+                    }
+                    opt = opt.nextSibling;
+                }
+                return r;
+            }
+        );
+
+        return remoteList;
     })(document.getElementById("window-zone")),
     // there's no need to define menu object here.
     TableMenu: new mizUIMenu(document.getElementById("menu-zone")),

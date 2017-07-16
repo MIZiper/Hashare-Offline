@@ -125,7 +125,30 @@ var TableDom = {
             }
         });
     },
-    Clear:function(){}
+    Clear:function(){},
+    ImportTable: function (evt) {
+        var m = {
+            "local": function () {
+                document.getElementById("input-tablefile").click();
+            },
+            "private": function () {
+                hsoFSPrivate.ListTable(function (val) {
+                    // val [{"guid", "name"}]
+                    hsoUI.RemoteFilesList.Open(evt, val, function (val) {
+                        // val [{"guid", "name"}]
+                        for (var i in val) {
+                            var fsObj = new hsoFSPrivate(val[i]["guid"], val[i]["name"]);
+                            CurrentUserObject.LinkTable(fsObj);
+                            var tblTempObj = new TableTempClass(fsObj);
+                            TableDom._ELE.children[0].appendChild(tblTempObj.TableDomObject);
+                        }
+                    }, null);
+                });
+            }
+        }
+        var t = hsoUI.AddTable.getValue();
+        m[t["type"]]();
+    }
 }
 
 var HashDom = {

@@ -139,12 +139,113 @@ var hsoFSOnedrive = (function () {
     return fsonedrive;
 })();
 
+var hsoFSPrivate = (function () {
+    function fsprivate(guid, name) {
+        this.type = "private";
+        this.guid = guid;
+        this.name = name;
+    }
+
+    fsprivate.prototype.url = function () {
+        return "hso/"+this.guid+"#ts="+Date.now();
+    }
+    fsprivate.prototype.Delete = function (callback) {
+        var xhrfs = new XMLHttpRequest();
+        xhrfs.open("delete", this.url());
+        xhrfs.onreadystatechange = function () {
+            if (this.readyState==4) {
+                if (this.status==200) {
+                    callback();
+                }
+                // else
+            }
+        }
+        xhrfs.send();
+    }
+    fsprivate.prototype.Open = function (callback) {
+        var xhrfs = new XMLHttpRequest();
+        xhrfs.open("get", this.url());
+        xhrfs.onreadystatechange = function () {
+            if (this.readyState==4) {
+                if (this.status==200) {
+                    callback(MizParser.Text2Object(this.responseText));
+                }
+            }
+        }
+        xhrfs.send();
+    }
+    fsprivate.prototype.Save = function (obj, callback) {
+        var xhrfs = new XMLHttpRequest();
+        xhrfs.open("put", this.url());
+        xhrfs.onreadystatechange = function () {
+            if (this.readyState==4) {
+                if (this.status==200) {
+                    callback();
+                }
+            }
+        }
+        xhrfs.send(MizParser.Object2Blob(obj, this.name));
+    }
+    fsprivate.prototype.Get = function (callback) {
+        var xhrfs = new XMLHttpRequest();
+        xhrfs.open("get", this.url());
+        xhrfs.responseType = "blob";
+        xhrfs.onreadystatechange = function () {
+            if (this.readyState==4) {
+                if (this.status==200) {
+                    callback(this.response);
+                }
+            }
+        }
+        xhrfs.send();
+    }
+    fsprivate.prototype.GetValue = function () {
+        return this.guid+"|"+this.name.MizEncode()+"|"+this.type;
+    }
+    fsprivate.prototype.SetName = function (name) {
+        this.name = name;
+    }
+
+    fsprivate.AddTable = function (name, callback) {
+        var xhrfs = new XMLHttpRequest();
+        xhrfs.open("post", "hso/#ts="+Date.now());
+        xhrfs.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhrfs.onreadystatechange = function () {
+            if (this.readyState==4) {
+                if (this.status==200) {
+                    callback(new fsprivate(this.responseText, name));
+                }
+            }
+        }
+        xhrfs.send("name="+name);
+    }
+    fsprivate.ListTable = function (callback) {
+        var xhrfs = new XMLHttpRequest();
+        xhrfs.open("get", "hso/#ts="+Date.now());
+        xhrfs.onreadystatechange = function () {
+            if (this.readyState==4) {
+                if (this.status==200) {
+                    callback(JSON.parse(this.responseText));
+                }
+            }
+        }
+        xhrfs.send();
+    }
+    fsprivate.LinkTable = function (guid, name, callback) {
+        callback(new fsprivate(guid, name));
+        // maybe modify guid (with psd) accordingly
+    }
+
+    return fsprivate;
+})();
+
 var mizFileServerManager = (function () {
     // a register required, for tablesServer/fsServer/backupServer
     var map = {
         "local": hsoFSLocal,
-        "mizip": hsoFSMIZip,
-        "onedrive": hsoFSOnedrive
+    //  "mizip": hsoFSMIZip,
+    //  "onedrive": hsoFSOnedrive
+        "private": hsoFSPrivate
     }
     
     function fileservermanager(fsStr) {
@@ -162,5 +263,6 @@ var mizFileServerManager = (function () {
 
 hsoUI.AddTable.RegisterServers([
     {"name": "Local", "value": "local"},
-    {"name": "MIZip.net", "value": "mizip"}
+//  {"name": "MIZip.net", "value": "mizip"}
+    {"name": "Private", "value": "private"}
 ]);

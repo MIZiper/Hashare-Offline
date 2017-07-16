@@ -411,7 +411,7 @@ var CurrentUserClass = (function(){
             callback(fsObj);
         });
     }
-    C.prototype.DeleteTable = function(tblStoreObj){
+    C.prototype.DeleteTable = function (tblStoreObj, remote) {
         var cuo = this;
         tblStoreObj.Delete(function () {
             var objs = cuo.TableStoreObjects;
@@ -422,7 +422,7 @@ var CurrentUserClass = (function(){
                 }
             }
             cuo.flush();
-        });
+        }, remote);
     }
     C.prototype.LinkTable = function (fsObj) {
         this.TableStoreObjects.push(fsObj);

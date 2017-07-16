@@ -1,3 +1,16 @@
+(function () {
+    var langsPack = {
+        "langs": ["zh-cn", "en"],
+        "pack": {
+            "fs-delremotely": ["", "Remote entity deleted."],
+            "fs-del404": ["", "Remote entity not found, delete entry."],
+            "fs-delaswell": ["", "Some wrong with server, delete the entry."],
+            "fs-openfailed": ["", "Get remote file failed, cannot access"]
+        }
+    }
+    MizLang.AddLangsPack(langsPack);
+})();
+
 var hsoFileServer = (function () {
     function fileserver() {
         this.credential = "";
@@ -149,18 +162,26 @@ var hsoFSPrivate = (function () {
     fsprivate.prototype.url = function () {
         return "hso/"+this.guid+"#ts="+Date.now();
     }
-    fsprivate.prototype.Delete = function (callback) {
-        var xhrfs = new XMLHttpRequest();
-        xhrfs.open("delete", this.url());
-        xhrfs.onreadystatechange = function () {
-            if (this.readyState==4) {
-                if (this.status==200) {
+    fsprivate.prototype.Delete = function (callback, remote) {
+        if (remote) {
+            var xhrfs = new XMLHttpRequest();
+            xhrfs.open("delete", this.url());
+            xhrfs.onreadystatechange = function () {
+                if (this.readyState==4) {
+                    if (this.status==200) {
+                        hsoUI.Message("fs-delremotely");
+                    } else if (this.status==404) {
+                        hsoUI.Message("fs-del404");
+                    } else {
+                        hsoUI.Message("fs-delaswell")
+                    }
                     callback();
                 }
-                // else
             }
+            xhrfs.send();
+        } else {
+            callback();
         }
-        xhrfs.send();
     }
     fsprivate.prototype.Open = function (callback) {
         var xhrfs = new XMLHttpRequest();
@@ -168,7 +189,11 @@ var hsoFSPrivate = (function () {
         xhrfs.onreadystatechange = function () {
             if (this.readyState==4) {
                 if (this.status==200) {
+                    // hsoUI.Message("fs-loading");
                     callback(MizParser.Text2Object(this.responseText));
+                    // hsoUI.Message("fs-loaded");
+                } else {
+                    hsoUI.Message("fs-openfailed")
                 }
             }
         }

@@ -99,8 +99,6 @@ SomeManager.Add(new SomeManager("down-display",function(val){
     return a.href;
 }));
 
-document.getElementById("btn-alert-yes").addEventListener("click",MizUI.Message.AlertYes,false);
-document.getElementById("btn-alert-no").addEventListener("click",MizUI.Message.AlertNo,false);
 document.getElementById("btn-picker-yes").addEventListener("click",MizUI.Picker.Yes,false);
 document.getElementById("btn-picker-no").addEventListener("click",MizUI.Picker.No,false);
 document.getElementById("btn-editem-yes").addEventListener("click",MizUI.Editem.Yes,false);

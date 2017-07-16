@@ -9,7 +9,10 @@
             "ui-addhash": ["", "Add Hash"],
             "ui-paste": ["", "Paste"],
             "ui-remotelist": ["", "Files List"],
-            "ui-getentity": ["", "Down Entity"]
+            "ui-getentity": ["", "Down Entity"],
+            "ui-deltable": ["", "Delete Table"],
+            "ui-cfm2deltable": ["", "Are you sure to delete the table? By checking 'Delete Remote', the entity exists in remote server will be deleted."],
+            "ui-delremote": ["", "Delete Remote"]
         }
     }
     MizLang.AddLangsPack(langsPack);
@@ -378,5 +381,35 @@ var hsoUI = {
     ItemMenu: new mizUIMenu(document.getElementById("menu-zone")),
     ItemTypeMenu: new mizUIMenu(document.getElementById("menu-zone")),
     PickerImageMenu: new mizUIMenu(document.getElementById("menu-zone")),
-    PickerTagFilterMenu: new mizUIMenu(document.getElementById("menu-zone"))
+    PickerTagFilterMenu: new mizUIMenu(document.getElementById("menu-zone")),
+    DelTableAlert: (function (hostDom) {
+        var deltable = new mizUIWindow("ui-deltable", hostDom);
+
+        var pMessage = document.createElement("p");
+        pMessage.textContent = MizLang.GetDefaultLang("ui-cfm2deltable");
+        pMessage.className = "alert-message";
+        deltable.SetContent(pMessage);
+
+        var chkEntity = document.createElement("input"),
+            lblEntity = document.createElement("label");
+        chkEntity.type = "checkbox";
+        lblEntity.textContent = MizLang.GetDefaultLang("ui-delremote");
+        lblEntity.appendChild(chkEntity);
+        deltable.SetPanel(lblEntity);
+
+        deltable.SetGet(
+            function () {
+                chkEntity.checked = false;
+            },
+            function () {
+                return chkEntity.checked;
+            }
+        );
+
+        return deltable;
+    })(document.getElementById("window-zone")),
+    Message: function (msgKey) {
+        // use previous implementation temporarily
+        MizUI.Message.Hint(msgKey);
+    }
 }

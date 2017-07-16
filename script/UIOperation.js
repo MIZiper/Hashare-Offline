@@ -92,16 +92,6 @@ var MizUI = {
         _timeout:0,
         _hintPara:document.getElementById("hint-message").children[0],
         _hintDiv:document.getElementById("hint-message"),
-        _alertPara:document.getElementById("alert-message").children[0],
-        _alertDiv:document.getElementById("alert-message"),
-        _alertYes:null,
-        _alertNo:null,
-        _alertKeyShortCut:function(evt){
-            if (evt.which==27)
-                MizUI.Message.AlertNo();
-            else if (evt.which==13)
-                MizUI.Message.AlertYes();
-        },
         _hint:function(str){
             clearTimeout(MizUI.Message._timeout);
             MizUI.Message._hintPara.textContent = str;
@@ -119,23 +109,6 @@ var MizUI = {
         },
         Hint:function(msgKey){
             MizUI.Message._hint(MizLang.GetDefaultLang(msgKey));
-        },
-        Alert:function(msgKey,yesCallback,noCallback){
-            MizUI.Message._alertPara.textContent = MizLang.GetDefaultLang(msgKey);
-            MizUI.Message._alertDiv.style.display = "block";
-            MizUI.Message._alertYes = yesCallback;
-            MizUI.Message._alertNo = noCallback;
-            document.body.addEventListener("keydown",MizUI.Message._alertKeyShortCut,false);
-        },
-        AlertYes:function(evt){
-            MizUI.Message._alertYes();
-            document.body.removeEventListener("keydown",MizUI.Message._alertKeyShortCut,false);
-            MizUI.Message._alertDiv.style.display = "none";
-        },
-        AlertNo:function(evt){
-            if (MizUI.Message._alertNo) MizUI.Message._alertNo();
-            document.body.removeEventListener("keydown",MizUI.Message._alertKeyShortCut,false);
-            MizUI.Message._alertDiv.style.display = "none";
         }
     },
     Display:{

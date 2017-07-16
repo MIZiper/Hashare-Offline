@@ -19,18 +19,20 @@ var TableDom = {
     SwitchTo:function(srcEle){
         var tblTempObj = srcEle.MizObject;
         CurrentTableObject = new CurrentTableClass(tblTempObj.TableStoreObject);
-        CurrentTableObject.Loading(HashDom.Init);
-        document.getElementById("table-name").textContent = tblTempObj.GetName();
-        document.getElementById("main-blk").style.display="none";
-        document.getElementById("table-blk").style.display="block";
+        CurrentTableObject.Loading(function () {
+            HashDom.Init();
+            document.getElementById("table-name").textContent = tblTempObj.GetName();
+            document.getElementById("main-blk").style.display="none";
+            document.getElementById("table-blk").style.display="block";
+        });
     },
-    Delete:function(srcEle){
-        MizUI.Message.Alert("sys-cfm2deltable",function(){
+    Delete:function(srcEle, evt){
+        hsoUI.DelTableAlert.Open(evt, true, function (remote) {
             var tblTempObj = srcEle.MizObject;
-            CurrentUserObject.DeleteTable(tblTempObj.TableStoreObject);
+            CurrentUserObject.DeleteTable(tblTempObj.TableStoreObject, remote);
             tblTempObj.Tini();
             srcEle.parentElement.removeChild(srcEle);
-        },null);
+        }, null);
     },
     Save:function(){
         if (!EventManager.CanContinue(0)) return;

@@ -93,7 +93,6 @@ var TableDom = {
                 freader.readAsText(files[index]);
             }
         })(fs,0);
-        hsoUI.AddTable.No();
     },
     Edit:function(srcEle,evt){
         hsoUI.AddTable.Open(evt, srcEle.textContent, (function (ele) {
@@ -133,7 +132,19 @@ var TableDom = {
             "local": function () {
                 document.getElementById("input-tablefile").click();
             },
-            "private": function () {
+            "mizip": function (val, evt) {
+                val["by"] = "import";
+                hsoUI.PasswordAuth.Open(evt, val, function (v) {
+                    // {opsd, epsd, guid}
+                    v["name"] = val["name"];
+                    v["host"] = val["host"];
+                    var fsObj = new hsoFSMIZip(v);
+                    CurrentUserObject.LinkTable(fsObj);
+                    var tblTempObj = new TableTempClass(fsObj);
+                    TableDom._ELE.children[0].appendChild(tblTempObj.TableDomObject);
+                }, null);
+            },
+            "private": function (val, evt) {
                 hsoFSPrivate.ListTable(function (val) {
                     // val [{"guid", "name"}]
                     hsoUI.RemoteFilesList.Open(evt, val, function (val) {
@@ -148,8 +159,9 @@ var TableDom = {
                 });
             }
         }
-        var t = hsoUI.AddTable.getValue();
-        m[t["type"]]();
+        hsoUI.AddTable.Nextep(function (val, evt) {
+            m[val["type"]](val, evt);
+        });
     }
 }
 
@@ -237,7 +249,7 @@ var HashDom = {
             var obj = new HashTempClass(hashStoreObj);
             HashDom._ELE.children[0].appendChild(obj.HashDomObject);
             HashDom._copiedHash.ItemStrings = null;
-            hsoUI.AddHash.No();
+            hsoUI.AddHash.No(); //!! replace this using hsoUI.AddHash.Nextep
         } else {
             MizUI.Message.Hint("sys-nohashcopied");
         }

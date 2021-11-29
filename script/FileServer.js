@@ -137,9 +137,13 @@ var hsoFSLocal = (function () {
 })();
 
 var hsoFSMIZip = (function () {
-    function fsmizip() {
-        
+    function fsmizip(guid, name) {
+        this.type = "mizip";
+        this.guid = guid;
+        this.name = name;
     }
+
+    
 
     return fsmizip;
 })();

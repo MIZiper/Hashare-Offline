@@ -12,7 +12,12 @@
             "ui-getentity": ["", "Down Entity"],
             "ui-deltable": ["", "Delete Table"],
             "ui-cfm2deltable": ["", "Are you sure to delete the table? By checking 'Delete Remote', the entity exists in remote server will be deleted."],
-            "ui-delremote": ["", "Delete Remote"]
+            "ui-delremote": ["", "Delete Remote"],
+            "ui-psdauth": ["", "Auth using Password"],
+            "ui-host": ["", "Host"],
+            "ui-guid": ["", "GUID"],
+            "ui-opsd": ["", "Owner password"],
+            "ui-epsd": ["", "Encrypt password"]
         }
     }
     MizLang.AddLangsPack(langsPack);
@@ -27,6 +32,14 @@ var mizUIFrame = (function () {
          * set "true" to menu, it won't fit screen.
          * or maybe yes/will?
          */
+    }
+
+    uiframe.createElementWithLabel = function (eleStr, lblKey) {
+        lbl = document.createElement("label");
+        lbl.textContent = MizLang.GetDefaultLang(lblKey);
+        ele = document.createElement(eleStr);
+        lbl.appendChild(ele);
+        return [lbl, ele];
     }
 
     uiframe.prototype.Show = function (x, y) {
@@ -146,6 +159,11 @@ var mizUIWindow = (function () {
         this.getValue = getValue;
     }
 
+    /**
+     * Yes/No shouldn't be exposed, or called outside this constructor function
+     * Because call them alone won't pop object from uiStack
+     * Should I make them anonymous?
+     */
     uiwindow.prototype.Yes = function () {
         if (this.yesCallback) {
             this.yesCallback(this.getValue());
@@ -164,6 +182,23 @@ var mizUIWindow = (function () {
         this.yesCallback = yesCallback;
         this.noCallback = noCallback;
         this.dom.querySelector("input, textarea, select, button").focus();
+        this._evt = evt; // only for nextep?
+    }
+    uiwindow.prototype.Nextep = function (callback, forced) {
+        // this is for programmatically closed occasion
+        var last = uiStack.pop()
+        if (last) {
+            if (last==this) {
+                callback(this.getValue(), this._evt);
+                this.Close();
+            } else {
+                uiStack.push(last);
+            }
+        } else {
+            if (forced) {
+                callback(this.getValue(), this._evt);
+            }
+        }
     }
 
     return uiwindow;
@@ -260,7 +295,12 @@ var hsoUI = {
             lblName = document.createElement("label");
         inputName.type = "text";
         lblName.textContent = MizLang.GetDefaultLang("ui-addtable");
-        fragEle.ChainAppend(lblName).ChainAppend(inputName);
+        var inputHost = document.createElement("input"),
+            lblHost = document.createElement("label");
+        inputHost.type = "text";
+        lblHost.textContent = MizLang.GetDefaultLang("ui-host");
+        // set host invisible for local?
+        fragEle.ChainAppend(lblName).ChainAppend(inputName).ChainAppend(lblHost).ChainAppend(inputHost);
         addTableWindow.SetContent(fragEle);
 
         var fragEle = document.createDocumentFragment(),
@@ -282,7 +322,8 @@ var hsoUI = {
             function () {
                 return {
                     "type": cmbServer[cmbServer.selectedIndex].value,
-                    "name": inputName.value
+                    "name": inputName.value,
+                    "host": inputHost.value
                 }
             }
         );
@@ -374,6 +415,39 @@ var hsoUI = {
         );
 
         return remoteList;
+    })(document.getElementById("window-zone")),
+    PasswordAuth: (function (hostDom) {
+        var psdauth = new mizUIWindow("ui-psdauth", hostDom);
+
+        var fragEle = document.createDocumentFragment(),
+            mHost = mizUIFrame.createElementWithLabel("span", "ui-host"),
+            mGuid = mizUIFrame.createElementWithLabel("input", "ui-guid"),
+            mOpsd = mizUIFrame.createElementWithLabel("input", "ui-opsd"),
+            mEpsd = mizUIFrame.createElementWithLabel("input", "ui-epsd");
+        fragEle.ChainAppend(mHost[0]).ChainAppend(mGuid[0]).ChainAppend(mOpsd[0]).ChainAppend(mEpsd[0]);
+        psdauth.SetContent(fragEle);
+
+        psdauth.SetGet(
+            function (val) {
+                // val {host, by}
+                mOpsd[1].value = ""; mEpsd[1].value = ""; mGuid[1].value = "";
+                mHost[1].textContent = val["host"];
+                if (val["by"]=="add") {
+                    mGuid[0].style.display = "none";
+                } else { // val["by"]=="import"
+                    mGuid[0].style.display = "block";
+                }
+            },
+            function () {
+                return {
+                    "guid": mGuid[1].value,
+                    "opsd": mOpsd[1].value,
+                    "epsd": mEpsd[1].value
+                }
+            }
+        );
+
+        return psdauth;
     })(document.getElementById("window-zone")),
     // there's no need to define menu object here.
     TableMenu: new mizUIMenu(document.getElementById("menu-zone")),
